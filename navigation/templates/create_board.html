@@ -1,0 +1,51 @@
+<html>
+<head>
+  <script type="text/javascript">
+  var map;
+  function initMap() {
+  var myLatlng = new google.maps.LatLng(23.023657898587178,72.57351636599606);
+
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+  var marker = new google.maps.Marker({
+  draggable: true,
+  position: myLatlng,
+  map: map,
+  title: "Your location"
+  });
+
+  google.maps.event.addListener(marker, 'dragend', function (event) {
+    document.getElementById("latbox").value = this.getPosition().lat();
+    document.getElementById("lngbox").value = this.getPosition().lng();
+});
+
+
+  }
+  </script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6a14x2cSa9aU1AV1QJY84gK9rmApeFsU&callback=initMap">
+  </script>
+</head>
+<body onload="initMap()">
+<h1>Create Board</h1><br /><br /><br />
+
+<form action="{% url 'save_board' %}" method="POST">
+  <div id="map_canvas" style="width:100%; height:50%"></div>
+  <div id="latlong">
+    {% csrf_token %}
+    <p>Latitude: <input size="20" type="text" id="latbox" name="lat" ></p>
+    <p>Longitude: <input size="20" type="text" id="lngbox" name="long" ></p>
+    <input type="text" name='street' placeholder="Flat no./ street" />
+    <input type="text" name="area" placeholder="area" />
+    <input type="text" name="city" placeholder="city" />
+    <input type="text" name="state" placeholder="state" />
+    <input type="submit" value="create board"/>
+  </div>
+</form>
+</body>
+</html>

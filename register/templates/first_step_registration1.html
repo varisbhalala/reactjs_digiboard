@@ -1,0 +1,162 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<style type="text/css">
+
+body{
+	padding-top: 10%;
+	padding-left: 10%;
+	padding-right: 10%;
+	padding-bottom: 10%;
+}
+
+.text{
+	border: 1px solid;
+}
+
+div{
+	height: 3%;
+	width: 80%;
+}
+
+</style>
+
+<script type="text/javascript">
+
+function click(){
+	alert("All Set. . . \n Go to Your Registered mail address, \nand click on link forworded :)");
+}
+function validatePassword(){
+	var password = document.getElementById('pass').value;
+	console.log(password);
+	var lowerCaseLetters = /[a-z]/g;
+	var upperCaseLetters = /[A-Z]/g;
+	var numbers = /[0-9]/g;
+	if (!password.match(lowerCaseLetters)) {
+		alert("Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters")
+	}
+	
+	else if (!password.match(upperCaseLetters)) {
+		alert("Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters")
+	}
+	
+	else if (!password.match(numbers)) {
+		alert("Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters")
+	}
+	else if(password.length < 6) {
+		alert("Must contain at least one number and one uppercase and lowercase letter, and at least 6 or more characters")
+	}
+	
+
+}
+function check_login(element) {
+    $("#login_ok").hide();
+    $("#login_not").hide();
+    login = $(element).val();
+    if (login == "") {
+        return;
+    }
+    $.ajax({
+        url : $(element).attr("data-url"),
+        data : {
+            "csrfmiddlewaretoken" : $(element).siblings("input[name='csrfmiddlewaretoken']" ).val(),
+            "login":login,
+        },
+        method: "GET",
+        dataType : "json",
+        success : function (returned_data) {            
+            if (returned_data.is_success) {
+                $("#login_ok").show();
+                $("input[type=submit]").removeAttr("disabled");
+            } else {
+                $("#login_not").show();
+                $("input[type=submit]").attr("disabled", "disabled");
+
+            }
+        }
+    });
+}
+function check_email(element) {
+    
+    $("#login_not_email").hide();
+    email = $(element).val();
+    
+    if (email == "") {
+        return;
+    }
+    $.ajax({
+        url : $(element).attr("data-url"),
+        data : {
+            "csrfmiddlewaretoken" : $(element).siblings("input[name='csrfmiddlewaretoken']" ).val(),
+            "email":email,
+            
+        },
+        method: "GET",
+        dataType : "json",
+        success : function (returned_data) {            
+            if (returned_data.is_success) {
+                $("#login_not_email").hide();
+                $("input[type=submit]").removeAttr("disabled");
+            } else {
+                $("#login_not_email").show();
+                $("input[type=submit]").attr("disabled", "disabled");
+            }
+        }
+    });
+}
+</script>
+
+</head>
+<body>
+
+	{% if data %}
+		<script type="text/javascript">window.location='{% url "confirmMail" %}?' </script>
+	{% endif %}
+	
+
+	<form action="" method='post'>
+		{% csrf_token %}
+		<input type='radio' name='role' value='p' required>Publisher
+		<input type='radio' name='role' value='a' required>Advertiser
+		<!-- <div>Username: <INPUT type='username' name='username' required class='text' ></div> -->
+
+
+
+
+
+		<input type="text" class='form-control' name="username" placeholder="username"  id="username" onfocusout="" onKeyUp= "check_login(this);return false;" data-url="{% url 'check_user' %}">
+        <div class="col-md-6 col-sm-6" style="color:red;display:none;margin-top: 4px;"  id="login_not">
+          <span class="glyphicon glyphicon-remove"></span> Username already taken.
+      </div><br>
+      <div class="col-md-6 col-sm-6" style="color: green;display: none;margin-top: 4px;" id="login_ok">
+          <span class="glyphicon glyphicon-ok"></span> Username available.
+      </div><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<label>Email: </label>
+      <input type="email" name="email" class='form-control' placeholder="E-mail" onKeyUp= "check_email(this);return false;" data-url="{% url 'check_email' %}" />
+      <div class="col-md-6 col-sm-6" style="color:red;display:none;margin-top: 4px;"  id="login_not_email">
+          <span class="glyphicon glyphicon-remove"></span> Email is Registered.
+      </div><br>
+
+
+
+		<div>Password: <INPUT type='password' name='password' id="pass" onfocusout="validatePassword()" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" required></div>
+		<!-- <div>Confirm Password: <INPUT type='password' name='password' class='text' required></div> -->
+		<button onclick='click()'>Submit</button>
+	</form>
+
+</body>
+</html>

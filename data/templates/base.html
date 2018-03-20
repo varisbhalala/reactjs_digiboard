@@ -1,0 +1,226 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+	<head>
+		{% load custom_tags%}
+		{% load static %}
+    {% if request.session.user_id%}
+		{% check_for_new request.session.user_id request.session.role|stringformat:"s" as result%}
+		{% endif %}
+	
+		<title>{% block title %}{% endblock %}</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+     <link rel="stylesheet" href="{% static '/vendor/bootstrap/css/bootstrap.min.css' %}" />
+     <link rel="stylesheet" href="{% static '/css/modern-business.css' %}" />
+
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="../static/dist/bootstrap-clockpicker.min.css">
+    <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs"></script>
+		<link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+		{% block urgent %} {% endblock %}
+		<style type="text/css">
+			 .num {
+               position: absolute;
+               right: 11px;
+               top: 6px;
+               color: #fff;
+               background:#e01111;
+               border-radius:20px;
+               display: none;
+            }
+
+             .content{
+            	background:#b5b8bc;
+              color:#131416;
+            	width:100%;
+            	height:30px;
+              float: left;
+            }
+       
+             .anchor{
+              text-decoration: none;
+             }
+
+            .notifytray{
+            	display:None;   
+            	position: absolute;
+            	right:0px;
+            	overflow: auto;
+            	box-shadow: 0 8px 6px -6px gray;
+            	z-index: 1;
+            }
+           
+             
+
+
+
+
+
+		</style>
+
+		<script type="text/javascript">
+
+
+
+              var socket = new WebSocket('ws://' + window.location.host + '/users/');
+
+              socket.onopen = function open() {
+                  console.log('WebSockets connection created.');
+              };
+              var check = "check";
+			        $(document).ready(function(){
+                console.log({{result}});
+                if ({{result}} == 1 || {{result}} == 2) {
+                    console.log("publisher now");
+                    $("#number").show();
+                     }
+                else{
+                    $("#number").hide();
+                }
+                var role = "{{request.session.role}}";
+                if(role == 'p'){
+                    $("#notify-tray").hide(); 
+                    $("#notify-container").click(function(){
+                    $('#number').hide();  //Star_hide
+                    if(document.getElementById('notify-tray').style.display=='none'){
+                        console.log("clicked hereee")
+                        $("#notify-tray").css("display","inline-block");
+                        $.ajax({
+                             type:'GET',
+                             data:'publisher_id='+{{request.session.user_id}},
+                             url:'{% url "publisher" %}',
+                             success:function(html){
+                              console.log(html);
+                              $(".anchor").remove();
+                              $("#notify-tray").prepend(html);
+                             }
+                           });                
+                   }
+                   else{
+                       $("#notify-tray").hide();  
+                    }
+                   });
+                    socket.onmessage = function message(event) {
+                    str=JSON.stringify(event.data);
+                    console.log(event);
+                    var data = JSON.parse(event.data);
+                    console.log(jQuery.isEmptyObject(data)+"");
+                    console.log(data['accept']);
+                    console.log("piddddddddddddd"+data['pid']);
+                    if(data['pid']=={{request.session.user_id}}){
+                         console.log("piddddddddddddd"+data['pid']);
+                         $("#number").show();                
+                         $("#notify-tray").hide()
+                    }
+                    else{
+                         console.log("empty")
+                    }
+           // NOTE: We escape JavaScript to prevent XSS attacks.
+                   };
+               }
+               else if (role == 'a'){
+                  $("#notify-tray").hide(); 
+                  $("#notify-container").click(function(){
+                  $('#number').hide();
+                  if(document.getElementById('notify-tray').style.display=='none'){
+                        console.log("clicked hereee")
+                        $("#notify-tray").css("display","inline-block");
+                        $.ajax({
+                             type:'GET',
+                             data:'advertiser_id='+{{request.session.user_id}},
+                             url:'{% url "advertiser_notify" %}',
+                             success:function(html){
+                              console.log(html);
+                              $(".anchor").remove();
+                              $("#notify-tray").prepend(html);
+                             }
+                           });                
+                   }
+                   else{
+                       $("#notify-tray").hide();  
+                   }
+               });
+                 socket.onmessage = function message(event) {
+                 str=JSON.stringify(event.data);
+                 console.log(event);
+                 var data = JSON.parse(event.data);
+                 console.log(jQuery.isEmptyObject(data)+"");
+                 console.log(data['decision']);
+                console.log("aidddddd"+data['advertiser']);
+                if(data['advertiser']=={{request.session.user_id}}){
+                       $("#number").show();                
+                       $("#notify-tray").hide()
+                }
+                else{
+                         console.log("empty")
+                   }
+                 };
+              }
+              
+
+            });
+
+            
+           
+             if (socket.readyState == WebSocket.OPEN) {
+                socket.onopen();
+              }
+ 
+		</script>
+ 	</head>
+	<body>
+		
+		<nav class="navbar navbar-inverse" style="margin-bottom:0px">
+			<div class="container-fluid">
+				<ul class="nav navbar-nav">
+				 	<li><a href="#" class="navbar-brand">{% if request.session.role == 'p' %} Publisher {% else %} Advertiser  {% endif %}</a></li>
+				 </ul>
+				 
+				 <div class="navbar-header nav text-center">
+				 	<a class="navbar-brand" href="#">Digiboard</a>
+				 </div>	
+
+				
+				 <ul class="nav navbar-nav navbar-right">
+				 	{% if request.session.name %}
+				 	   
+				 		<li class="dropdown"><a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-log-in"></span> {{request.session.user_id}}</a>
+				 			<ul class="dropdown-menu">
+					 			<li><a href="{% url 'logout' %}">Logout</a></li>
+					 			<li><a href="#">Page 1-2</a></li>
+					 			<li><a href="#">Page 1-3</a></li>
+				 			</ul>
+				 		</li>
+				 		</li>
+				 	{% else %}
+					 	<li><a href="{% url 'registration' %}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+					 	<li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+				 	{% endif %}
+				 </ul>
+          <div class="nav navbar-nav navbar-right" id="notify">
+                       <li class="navbar-brand" id="notify-container"><i class="fa fa-bell-o fa-1x">
+                        <span class="num" id="number">*</span>
+                        </i></li>
+                 </div>
+				</div>
+			</nav>
+			<div class="notifytray" id="notify-tray"></div>
+		{% block content %}{% endblock %}
+
+
+		{% block important_script %} {% endblock %}
+		{% block footer %} {% endblock %}
+
+		<footer>
+			<div class="panel panel-default">
+				<div class="panel-footer text-center" style="position:static;"><label><h4> &copy 2018 All rights reserved by Digiboard </h4></label></div>
+			</div>
+		</footer>
+
+	</body>	
+
+
+</html>

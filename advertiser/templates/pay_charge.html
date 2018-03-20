@@ -1,0 +1,19 @@
+
+
+
+<form action="{% url 'pay' %}" method="POST">
+    {% csrf_token %}
+      <script
+        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+        data-key="pk_test_enNicNlRowtFPMduyPyeyeGw"
+        data-amount="{{ slot }}"
+        data-name="DigiBoard"
+        data-description="Booking Charge"
+        data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+        data-locale="auto" data-currency="inr">
+      </script>
+      <input type="hidden" name="slot_price" value="{{ slot_tupple.slot_price }}">
+      <input type="hidden" name="slot_id" value="{{ slot_tupple.id }}">
+      <input type="hidden" name="board_id" value="{{ slot_tupple.board_id }}">
+      <input type="hidden" name="publisher_id" value="{{ slot_tupple.publisher_id }}">
+    </form>

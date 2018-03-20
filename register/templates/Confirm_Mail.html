@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	{% if email %}
+			<script type="text/javascript">alert("Your Email is Varified. . .");window.location='{% url "profile" %}'</script>
+	{% else %}
+<hr>
+<div class='container text-center'>
+	
+	<h3><label>You're almost there!</label></h3>
+	<hr>
+	<p><h4>
+	A confirmation  email  has  been sent to Your registered email address. 
+	Click on the confirmation link in the email to activate your account.</h4></p>
+</div>
+<hr>
+{% endif %}
+
+{% endblock %}

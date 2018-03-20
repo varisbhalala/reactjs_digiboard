@@ -1,0 +1,203 @@
+{% include 'include_bootstrap' %}
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6a14x2cSa9aU1AV1QJY84gK9rmApeFsU&callback=initMap"></script>
+<link rel="stylesheet" type="text/css" href="static/dist/bootstrap-clockpicker.min.css">
+  <script type="text/javascript">
+  var map;
+  function initMap(lat,lng,bool) {
+  var myLatlng = new google.maps.LatLng(lat,lng);
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  var marker = new google.maps.Marker({
+  draggable: bool, 
+  position: myLatlng,
+  map: map,
+  title: "Your location"
+  });
+  google.maps.event.addListener(marker, 'dragend', function (event) {
+    document.getElementById("latbox").value = this.getPosition().lat();
+    document.getElementById("lngbox").value = this.getPosition().lng();
+});
+  }
+  </script>
+
+<script type="text/javascript">
+  
+  function outFocuse(){
+    time_sec=0;
+    
+    var from = document.getElementById("demo-input").value;
+    var e = document.getElementById("diff");
+    var time_ = e.options[e.selectedIndex].value;
+    if(time_ == 15){
+      time_sec = (time_*60);
+    }
+    if(time_ == 30){
+      time_sec = (time_*60);
+    }
+    if(time_ == 45){
+      time_sec = (time_*60);
+    }
+    if(time_ == 1){
+      time_sec = (time_*60*60);
+    }
+
+    var hr_split = from.split(":");
+    var from_seconds = (hr_split[0]*60*60)+(hr_split[1]*60);
+    var to_seconds = secondsToHms(from_seconds+time_sec);
+    document.getElementById("to-input").value = to_seconds;
+  }
+
+  function secondsToHms(d) {
+      d = Number(d);
+      var h = Math.floor(d / 3600);
+      var m = Math.floor(d % 3600 / 60);
+      if(h<10){h = "0"+h}
+      if(m<10){m = "0"+m}
+      
+      return h +":"+ m ; 
+  }
+
+  $("#id").click(function(){
+    
+  });
+  $(document).on("click", "id", function(){
+
+  });
+
+</script>
+
+
+
+<body>
+  <div class='container-fluid'>
+    <div class="row">
+      <div class="col-md-5">
+
+        <h1>{% if board %}Update {% else %} Create {% endif %} Board </h1>
+
+        <form action="{%url 'save_board' %}" method="POST" >
+          <div id="map_canvas" class='jumbotron' style="height:300px"></div>
+
+             {% if board %}<script type="text/javascript">initMap({{board.lat}},{{board.lng}},true)</script> {% else %} <script type="text/javascript">initMap(23.023657898587178,72.57351636599606,true)</script> {% endif %}
+             
+                {% csrf_token %}
+                 {%if board%}
+              <div class='form-group'>
+                 <label for='id'>Id: </label><input type="text" name="id" class='form-control' value="{% if board %}{{board.id}}{% endif %}" class='form-control'>
+              </div>
+               {% endif %}
+              <div class='form-group'>
+                  <label>Latitude: </label>
+                  <input type="text" id="latbox" name="lat" class='form-control' value='{% if board %}{{board.lat}}{% endif %}'>
+              </div>
+              <div class="form-group">
+                <label>Longitude:</label>
+                <input type="text" id="lngbox" name="lng" class='form-control' value='{% if board %}{{board.lng}}{% endif %}'>
+              </div>
+              <DIV class='form-group'>
+                <label>Street: </label>
+                <input type="text" name='street' class='form-control' placeholder="Flat no./ street" value="{% if board %}{{board.street}}{% endif %}"/>
+              </DIV>
+              <div class='form-group'>
+                <label>Area:</label>
+                <input type="text" name="area" class='form-control' placeholder="area" value='{% if board %}{{board.area}}{% endif %}' />
+              </div>
+              <div class='form-group'>
+                <label>City:</label>
+                <input type="text" name="city" class='form-control' placeholder="city" value="{% if board %}{{board.city}}{% endif %}"/>
+              </div>
+              <div>
+                <label>State:</label>
+                <input type="text" name="state" class='form-control' placeholder="state" value="{% if board %}{{board.state}}{% endif %}" />
+              </div>
+                
+              {% if board %}<input type="hidden" name='update' value="update" >{% endif %}
+              <div class='form-group'>
+                <label></label>
+                <input type="submit" class='btn btn-control btn-info form-control' value="{% if board %}Update {% else %} Create {% endif %} Board "/>
+              </div>
+        </form>
+
+    </div>
+    <div class="col-md-7">
+                  <h2>Create Slot</h2>
+                  <label>Duration: </label>
+                  <div class="form-group" data-placement="right"  data-align="top" data-autoclose="true">
+                      <select name='diff' class='form-control' id='diff'>
+                        <option value='15'>15 Minute</option>
+                        <option value='30'>30 Minute</option>
+                        <option value='45'>45 Minute</option>
+                        <option value='1'>1 Hour</option>
+                      </select>
+                  </div>
+
+                  <label>From:</label>
+                  <div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+                    <input id="demo-input" type='time' name='from' onfocusout="outFocuse()"  onChange="_write_()" class="form-control" required/>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-time"></span>
+                      </span>
+                  </div>
+
+                  <label>To:</label>
+                  <div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+                    <input type='time' name='to' class="form-control" id='to-input' />
+                    <input type='hidden' id='to_hidden' required>
+                      <span class="input-group-addon">
+                          <span class="glyphicon glyphicon-time"></span>
+                      </span>
+                  </div>
+
+                  <label>Price:</label>
+                  <div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+                    <input id="demo-input" type='number' name='price' class="form-control" onfocus="check_to_time()" required/>
+                      <span class="input-group-addon"></span>
+                  </div>
+
+                  <DIV class="form-group">
+                    <label></label>
+                    <button class="btn btn-success form-control" id='submit-btn' >Create</button>
+                  </DIV>
+
+
+                  <!-- jQuery and Bootstrap scripts -->
+                  <!-- ClockPicker script -->
+                  <script type="text/javascript" src="static/dist/bootstrap-clockpicker.min.js"></script>
+                   
+                  <script type="text/javascript">
+                  $('#demo-input').clockpicker({
+                      autoclose: true
+                  });
+
+                  function check_to_time(){
+                    var to_time = document.getElementById('to-input').value;
+                    var from = document.getElementById("demo-input");
+                    if(to_time==""){
+                      document.getElementById('submit-btn').disabled = true;
+                      from.focus();
+                    }
+                    else{
+                      document.getElementById('submit-btn').disabled = false;
+                    }
+                  }
+
+                  function _write_(){
+                    var to_time = document.getElementById('to-input').value;
+                    if(to_time==""){
+                      
+                    }
+                    else{
+                      document.getElementById('submit-btn').disabled = false;
+                    }
+                  }
+                  </script>
+    </div>
+  </div>
+
+</div>
+</body>

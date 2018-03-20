@@ -1,0 +1,22 @@
+{% include 'navigation.html' %}
+<br />
+<br />
+
+<h1>PUBLISHER PANEL</h1>
+Welcome: {{request.session.name}}
+ID: {{request.session.id}}
+<<<<<<< HEAD
+<a href="{%url 'create_board'%} ">Create_Board</a>
+<a href="{% url 'get_board' %}"></a>
+
+<DIV>
+	<iframe height="100%" width='100%' src="{% url 'get_board' %}"></iframe>
+</DIV>
+=======
+<a href="{% url 'create_board' %}">create_board</a>
+<a href="{% url 'slot' %}">create_slot</a>
+
+<DIV>
+	<iframe height="100%" width='100%' src="{% url 'get_board' %}"></iframe>
+</DIV>
+>>>>>>> 2f558a3a014656362040ae9244468ad07864daf9

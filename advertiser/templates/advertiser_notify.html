@@ -1,0 +1,26 @@
+{% load custom_tags%}
+
+{% for request in requests%}
+
+      {% if request.request_status %}
+
+         {% if request.approve_status == 1%}
+               <a href="{% url 'upload_content' %}?board_id={{request.board_id}}&slot_id={{request.slot_id}}&start_date={{request.start_date}}" class="anchor"><div class="content" id="content"> {{request.publisher.name}} accepted your request for the timeslot {{request.slot.from_field}} to {{request.slot.to}}</div><hr style="border-color:#a09a9a;margin:0px"></a>
+         {% elif request.approve_status == 2%}
+              <a href="{% url 'upload_content' %}?board_id={{request.board_id}}&slot_id={{request.slot_id}}&start_date={{request.start_date}}" class="anchor">
+               <div class="content" id="content"> {{request.publisher.name}} declined your request for the timeslot {{request.slot.from_field}} to {{request.slot.to}}</div><hr style="border-color:#a09a9a;margin:0px"></a>
+         {% endif %}
+
+      {% else %}
+      
+      {% if request.approve_status == 1%}
+               <a href="{% url 'upload_content' %}?board_id={{request.board_id}}&slot_id={{request.slot_id}}&start_date={{request.start_date}}" class="anchor"><div class="content" id="content" style="font-weight: bold;"> {{request.publisher.name}} accepted your request for the timeslot {{request.slot.from_field}} to {{request.slot.to}}</div><hr style="border-color:#a09a9a;margin:0px"></a>
+         {% elif request.approve_status == 2%}
+               <a href="" class="anchor"><div class="content" id="content" style="font-weight: bold;"> {{request.publisher.name}} declined your request for the timeslot {{request.slot.from_field}} to {{request.slot.to}}</div><hr style="border-color:#a09a9a;margin:0px"></a>
+         {% endif %}
+      {% endif %}
+{% endfor %}
+{% check_for_new request.session.user_id request.session.role|stringformat:"s" as result%}
+{% if result %}
+   {% update_req aid request.session.role%}
+{% endif %}

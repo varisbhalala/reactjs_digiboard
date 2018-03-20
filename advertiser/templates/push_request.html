@@ -1,0 +1,13 @@
+<script type="text/javascript">
+	websocket = new WebSocket('ws://' + window.location.host + '/users/');
+	websocket.onopen = function open() {
+      console.log('WebSockets connection created.');
+      websocket.send(JSON.stringify({
+		coin:{{publisher_id}}
+	}));
+    };
+	
+
+	// Call onopen directly if socket is already open
+    if (websocket.readyState == WebSocket.OPEN) socket.onopen();
+</script>

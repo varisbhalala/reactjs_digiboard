@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block urgent %}
+	
+	<script type="text/javascript">
+	
+	function _(el) {
+	  return document.getElementById(el);
+	}
+
+	</script>
+
+{% endblock %}
+
+
+{% block content %}
+{% if booked %}
+<h1>{{booked}}</h1>
+{% endif %}
+<div class='container'>
+	{% if slot %}
+		<form action="{% url 'submit_content' %}" method="post"  enctype="multipart/form-data">
+		{% csrf_token %}
+			<label></label>
+			<div class="jumbotron well text-justify">
+				<h2><strong>Information:</strong></h3>
+					<h4>
+					Uploded advertise will be displayed for <kbd>30 Days</kbd>.
+				</h4>
+				<h4>Your Advertise will be displayed from <kbd>{{start_date}}</kbd> to <kbd>{{end_date}}</kbd> during <kbd>{{slot.from_field}}</kbd> to <kbd>{{slot.to}}</kbd>
+
+					 <h4>Located at <kbd>{{ board_obj.street }} , {{ board_obj.area }} ,{{ board_obj.city }} , {{ board_obj.state }}</kbd></h4>
+				</h4>
+				
+
+			</div>
+			<div class='well'>
+				<h2>Upload your Advertise here.</h2><hr>
+				<div class='form-group'>
+					<input type="hidden" name="board_id" value="{{board_obj.id}}" required/>
+					<input type="hidden" name="slot_id" value="{{slot.id}}" required/>
+					<input type="hidden" name="advertiser_id" value="{{aid}}" required/>
+					<input type="hidden" name="start_date" value="{{start_date}}"  required/>
+					<input type="hidden" name="end_date" value="{{end_date}}"  required/>
+				  <h3><label>Content type: </label>&nbsp
+				  <input type="radio" name="content_type" value="image" id="radio_image" checked required onClick="myFunction()"/> Image &nbsp
+				  <input type="radio" name="content_type" value="video" id="radio_video" required onClick="myFunction()"/> Video</h3>
+				</div>
+				<div class='form-group'>
+				  <label>Upload file </label>
+				 
+				  <h4><input type="file" name="content" class='btn-lg btn-info' id="image" accept="image/*" required/></h4>
+
+				  <div class='progress' id='progressbar_disp' style="display:none;">
+				  	<div id="progressBar" class="progress-bar progress-bar-striped active" aria-valuenow="0"
+				  	aria-valuemin="0" aria-valuemax="100" max="100" style="width:10px;"> 0 </div>
+				</div>
+				</div>
+
+				  <div class='form-group'>
+				  	<label>Duration in Seconds: </label>
+				  	<input type="number"  name="content_time" value=25 class='form-control' required/>
+				  </div>
+					<div class='text-center'>	
+						<input type='submit' onClick="uploadFile()" class='text-center btn-lg btn-success' style="width:30%"/>
+					</div>
+
+			</div>
+		</form>
+	{% else %}
+		<div class='alert-denger'>Request is not Approved... </div>
+	{% endif %}
+</div>
+{% endblock %}
+
+
+{% block important_script %}
+	<script type="text/javascript">
+
+	
+
+	function myFunction() {
+		var r_image = document.getElementById('radio_image');
+		var r_video = document.getElementById('radio_video');
+		if (r_image.checked == true){
+			document.getElementById('image').accept = "image/*";
+		}
+		if(r_video.checked == true){
+			document.getElementById("image").accept = "video/*";
+		}
+	}
+
+	function uploadFile() {
+		if( _("image").value != "" ){
+			_("progressBar").style.width = '10px';
+			_("progressbar_disp").style.display = "block";
+
+		}
+	var file = _("image").files[0];
+	
+	var formdata = new FormData();
+	formdata.append("image", file);
+	var ajax = new XMLHttpRequest();
+	ajax.upload.addEventListener("progress", progressHandler, false);
+	ajax.open("POST", "#"); // http://www.developphp.com/video/JavaScript/File-Upload-Progress-Bar-Meter-Tutorial-Ajax-PHP
+	  // //use file_upload_parser.php from above url
+
+	   ajax.send(formdata);
+	}
+
+	function progressHandler(event) {
+	  var percent = Math.round((event.loaded / event.total) * 100);
+	  $("#progressBar").attr('aria-valuenow',percent).css('width',percent+'%').text(percent+'%');
+	  // _("progressBar").style.width = Math.round(percent)+'%';
+	  // _("progressBar").text = Math.round(percent)+'%';
+	  //Math.round(percent)
+	}
+	</script>
+{% endblock %}

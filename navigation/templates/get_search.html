@@ -1,0 +1,21 @@
+
+{% for city_obj in record_area %}
+  <option>
+    {{city_obj.area}}
+  </option>
+{% endfor %}
+{% for city_obj in record_street %}
+  <option>
+    {{city_obj.street}}
+  </option>
+{% endfor %}
+{% for city_obj in record_state %}
+  <option>
+    {{city_obj.state}}
+  </option>
+{% endfor %}
+{% for city_obj in record_city %}
+  <option>
+    {{city_obj.city}}
+  </option>
+{% endfor %}

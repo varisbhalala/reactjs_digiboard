@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<div class="container">
+<h2>Profile:</h2>
+<form action='' method='post' enctype="multipart/form-data">
+	{% csrf_token %}
+	<div class='form-group'>
+		<label>Name:</label>
+		<INPUT type='text' name='name' class="form-control" required>
+	</div>
+	<div class='form-group'>
+		<label>Contact:</label>
+		<INPUT type='number' name='contact' class="form-control" required>
+	</div>
+	<DIV class='form-group'>
+		<label>Avatar: </label>
+		<input type='file' name='avatar' class="form-control" accept="image/*" required>
+	</DIV>
+	<DIV class='form-group'>
+		<label>Company Name: </label>
+		<INPUT type='text' name='cname' class="form-control" required>
+	</DIV>
+	<DIV class='form-group'>
+		<label>Company Address:</label>
+		<INPUT type='address' name='address' class="form-control" required>
+	</DIV>
+	<div class='form-group'>
+		<select id="state" name='state' class="form-control" required>
+			<option value=""> -- Select State -- </option>
+			{% for state in state %}
+			<option value="{{state.id}}">{{ state.name }}</option>
+			{% endfor %}
+		</select>	
+	</div>
+	<div class='form-group'>
+		<select id="city" name='city' class='form-control'  required>
+			<option value=""> -- Select State First -- </option>
+			</select>
+		</div>
+	<DIV class=' form-group text-center'>
+		<button class='btn-lg btn-success'>Update</button>
+	</DIV>
+</form>
+
+</div>
+{% endblock %}
+
+
+
+{% block important_script %}
+<script>
+
+  $(document).on("change", "#state", function(){
+    var stateID = $(this).val();
+    if(stateID){
+       //alert(stateID),
+          $.ajax({
+            type:'GET',
+            data:'state_id='+stateID,
+            url:'{% url "ajaxData" %}',
+            success:function(html){
+              $('#city').html(html);
+            }
+          });
+    }else{
+          $('#city').html('<option value="">Select state first</option>');
+     }
+  });
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+

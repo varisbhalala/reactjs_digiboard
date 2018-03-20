@@ -1,0 +1,78 @@
+
+<style type="text/css">
+    .card {
+      border: 0.5px rgba(0,0,0,0.2) solid;
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      width: 100%;
+      height: 100%;
+    }
+    .card:hover{
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.9);
+    }
+    .container {
+      padding: 2px 16px;
+    }
+
+    .show, button{
+
+    	padding-top: 1%;
+    	padding-left: 3%;
+      padding-right: 3%;
+      padding-bottom: 1%;
+    	height: 50%;
+    	width: 25%;
+    	display: block;
+  		float: left;
+  		position: relative;
+    }
+ </style>
+
+<script type="text/javascript">
+  var map;
+  function initMap() {}
+</script>
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs&callback=initMap"></script>
+<script type="text/javascript">
+  var map;
+  function initMap(lat,lng,id,area) {
+  var myLatlng = new google.maps.LatLng(lat,lng);
+
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById(id), myOptions);
+
+  var marker = new google.maps.Marker({
+  draggable: false,
+  position: myLatlng,
+  map: map,
+  title: area
+  });
+  }
+  </script>
+
+{% for board_obj in board %}
+
+
+
+  <input type='hidden' name='map' value='{{board_obj.id}}'>
+
+  <div class="show">
+  <div class='card'>
+    <button id="{{board_obj.id}}" style="width:100%; height:70%"></button>
+    <script type="text/javascript">initMap({{board_obj.lat}},{{board_obj.lng}},"{{board_obj.id}}","{{board_obj.area}}")</script>
+   <div class="container">
+      Area: {{board_obj.area}}<hr>
+  	 	Street: {{board_obj.street}}<hr>
+      City: {{board_obj.city}}<hr>
+      State: {{board_obj.state}}
+</div>
+ </div>
+
+
+</div>
+
+{% endfor %}

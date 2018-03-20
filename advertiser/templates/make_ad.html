@@ -1,0 +1,115 @@
+{% include 'include_bootstrap' %}
+<body>
+<DIV  class='container'>
+	<h2><label>Search Board:</label></h2>
+	<div class='form-group'>
+		<h3><label>Enter State:</label></h3>
+	</div>
+	<form method='post'>
+		{% csrf_token %}
+	<div class='form-group'>
+		<select id="state" name='state' class="form-control" required>
+			<option value=""> -- Select State -- </option>
+			{% for state in state %}
+			<option value="{{state.id}}">{{ state.name }}</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class='form-group'>
+		<select id="city" name='city' class='form-control'  required>
+			<option value=""> -- Select State First -- </option>
+		</select>
+	</div>
+	<div class="text-center">
+		<button class='btn btn-success'>Search</button>
+	</div>
+</form>
+</DIV>
+
+
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs"></script>
+<script type="text/javascript">
+  var map;
+  function initMap(lat,lng,id,area) {
+  var myLatlng = new google.maps.LatLng(lat,lng);
+
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById(id), myOptions);
+
+  var marker = new google.maps.Marker({
+  draggable: false,
+  position: myLatlng,
+  map: map,
+	disableDefaultUI:true,
+
+  title: area
+  });
+  }
+  </script>
+
+<DIV class='container-fluid'>
+
+<div class='row'>
+{%if board_obj%}
+
+{% for board_obj in board_obj %}
+<div class='col-sm-3'>
+<form action='{% url "create_board" %}' method='POST' >
+
+<div class="show">
+  <a href="{% url 'plan' %}?board_id={{board_obj.id}}">
+  <div class='card'>
+    {% csrf_token %}
+  <input type='hidden' name='board_id' value='{{board_obj.id}}'>
+  <input type='hidden' name='get_board' value='{{board_obj.id}}'>
+
+
+
+ <div id="{{board_obj.id}}" class='jumbotron' style="height:300px"></div>
+    <script type="text/javascript">initMap({{board_obj.lat}},{{board_obj.lng}},"{{board_obj.id}}","{{board_obj.area}}")</script>
+
+    </script>
+      <p><label>Area: </label>{{board_obj.area}} <label>Street: </label> {{board_obj.street}}</p>
+      <label>City: </label>{{board_obj.city}}
+      <label>State: </label> {{board_obj.state}}
+
+    </div>
+  </a>
+  </div>
+
+</form>
+</div>
+{% endfor %}
+{% else %}
+	Sorry, No Result Found
+{% endif %}
+
+</DIV>
+</div>
+
+<script>
+
+  $(document).on("change", "#state", function(){
+    var stateID = $(this).val();
+    if(stateID){
+       //alert(stateID),
+          $.ajax({
+            type:'GET',
+            data:'state_id='+stateID,
+            url:'{% url "ajaxData" %}',
+            success:function(html){
+              $('#city').html(html);
+            }
+          });
+    }else{
+          $('#city').html('<option value="">Select state first</option>');
+     }
+  });
+</script>
+
+
+</body>

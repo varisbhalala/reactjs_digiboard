@@ -1,0 +1,211 @@
+{% extends 'base.html'%}
+
+{% block content %}
+    <!-- Navigation -->
+    <script type="text/javascript">
+      var map;
+      function initMap(lat,lng,id,area) {
+      var myLatlng = new google.maps.LatLng(lat,lng);
+
+      var myOptions = {
+         zoom: 13,
+         center: myLatlng,
+         mapTypeId: google.maps.MapTypeId.ROADMAP
+         }
+      map = new google.maps.Map(document.getElementById(id), myOptions);
+
+      var marker = new google.maps.Marker({
+      draggable: false,
+      position: myLatlng,
+      map: map,
+      disableDefaultUI:true,
+
+      title: area
+      });
+      }
+
+
+       $(document).ready(function(){
+         if({{req.approve_status}} == 0){
+           $(".decision").show();
+           $(".Accepted").hide();
+           $(".Declined").hide();
+         }
+         else if({{req.approve_status}} == 1){
+          $(".decision").hide();
+          $(".Declined").hide();
+          $(".Accepted").show();
+         }
+         else{
+           $(".decision").hide();
+           $(".Accepted").hide();
+           $(".Declined").show();
+         }
+         $(".decision").click(function(){
+               if(this.value == 'Accept'){
+                      var str = "Do you want to Accept this request?";
+                      $(".modal-title").html(str);
+                      $("#yes").click(function(){
+                            $(".decision").hide();
+                            $(".Accepted").show();
+                            updateRequest(1);
+                            console.log(check);
+                            sendNotification("asds",{{req.advertiser.id}});
+                            
+                                   
+                      })
+                 }
+               else{
+                   var str = "Do you want to Decline this request?";
+                      $(".modal-title").html(str);
+                      $("#yes").click(function(){
+                            $(".decision").hide();
+                            $('.Accepted').hide();
+                            $(".Declined").show();
+                            updateRequest(2);
+                            sendNotification("d");
+
+                      })
+               }
+         });
+         
+         function sendNotification(dec,ad){
+                           console.log(check);
+                           socket.send(JSON.stringify({
+                                 decision:dec,
+                                 advertiser:ad
+                            }));
+
+         }
+         function updateRequest(status){
+                        $.ajax({
+                             type:'GET',
+                             data:{'rid':{{req.id}},'approve_status':status},
+                             url:'{% url "accept_or_decline" %}',
+                             success:function(html){
+                             console.log("success");
+                             }
+                           });
+                       
+         }
+         $(".d").click(function(){
+              $(".decision").show();
+         });
+
+       });
+      </script>
+
+    <!-- Page Content -->
+    <div class="container">
+      
+      <!-- Page Heading/Breadcrumbs -->
+      
+     
+
+      <!-- Intro Content -->
+      <div class="row" style="height:300px;margin-top: 30px">
+        <div class="col-lg-6" id="map">
+          <!-- <img class="img-fluid rounded mb-4" src="http://placehold.it/750x450" alt=""> -->
+
+          
+
+          <script type="text/javascript">initMap({{req.board.lat}},{{req.board.lng}},"map","{{req.board.area}}")</script>
+
+          </script>
+        </div>
+        <div class="col-lg-6">
+              <div class="card h-100 text-center">
+            <!-- <img class="card-img-top" src="http://placehold.it/750x450" alt=""> -->
+            
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-muted">Location</h6>
+
+                <p class="card-text">
+                  Latitude : {{ req.board.lat }}
+                </p>
+                <p class="card-text">
+                  Longitude : {{ req.board.lng }}
+                </p>
+                <p class="card-text">
+                  Street : {{ req.board.street }}
+                </p>
+                <p class="card-text">
+                  Areadgshg : {{ req.board.area }}
+                </p>
+                <p class="card-text">
+                  city : {{ req.board.city }}
+                </p>
+                <p class="card-text">
+                  state : {{ req.board.state }}
+                </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /.row -->
+
+      <!-- Team Members -->
+      <h2 style="text-align:center">About Advertiser</h2>
+
+      <div class="row">
+        <div class="col-lg-12 mb-12">
+          <div class="card h-100 text-center ">
+            <!-- <img class="card-img-top" src="http://placehold.it/750x450" alt=""> -->
+            
+            <div class="card-body">
+              <h4 class="card-subtitle mb-2 text-muted">Advertiser name:{{req.publisher.name}}</h4>
+
+                <p class="card-text">
+                  Contact : {{ req.advertiser.contact }}
+                </p>
+                <p class="card-text">
+                  Company Name : {{ req.advertiser.company_name }}
+                </p>
+                <p class="card-text">
+                  Company Address : {{ req.advertiser.company_address }}
+                </p>
+                
+            </div>
+        
+            <div class="card-footer">
+              
+                
+                 {% csrf_token %}
+                   <input type="hidden" value="{{ req.id}}" name="request_id" id="request_id"/>
+                   <button class="btn btn-secondary btn-lg decision" value="Accept" name="decision" data-toggle="modal" data-target="#myModal" style="display: none">Accept</button>
+                   <button class="btn btn-secondary btn-lg decision" value="Decline" name="decision" data-toggle="modal" data-target="#myModal" style="display: none">Decline</button>
+                   <button class="btn btn-success btn-lg Accepted" style="display: none" disabled="true"><i class="fa fa-check" aria-hidden="true" ></i>Accepted</button>
+                   <button class="btn btn-danger btn-lg Declined" style="display: none"><i class="fa fa-times" aria-hidden="true" ></i>Declined</button>                   
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+           
+           
+           <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title"></h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="yes">Yes</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="no">No</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+        
+    </div>
+    <!-- /.container -->
+
+    <!-- Footer -->
+   {% endblock %}

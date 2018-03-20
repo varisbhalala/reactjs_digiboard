@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %} Welcome {% endblock %}
+
+
+Welcome, {{request.session.name}}
+
+<br>
+
+
+{% block content %}
+Welcome, {{request.session.name}}
+
+
+{{request.session.role}}
+
+{% if request.session.role == 'p' %}
+	<a href="../create_board"><button>Create Board</button></a>
+	<a href="../create_slot"><button>Create Slot</button></a>
+{% else %}
+
+
+Advertiser Module is under Process. . .
+
+
+
+	<a href="../make_ad"><button>Make Add</button></a>
+
+{% endif %}
+
+{% endblock %}
+

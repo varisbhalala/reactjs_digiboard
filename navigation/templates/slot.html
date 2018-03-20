@@ -1,0 +1,49 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/static/css/jquery-clockpicker.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <script src="/static/js/jquery-clockpicker.min.js"></script>
+  <script type="text/javascript">
+  $('.clockpicker').clockpicker({
+      placement: 'bottom',
+      align: 'left',
+      donetext: 'Done'
+  });
+  </script>
+</head>
+<body>
+  <form method="post" action="{% url 'save_slot'%}">
+
+  {% csrf_token %}
+  <div class="input-group clockpicker">
+      Form : <input type="text" class="form-control" value="19:00" name="from">
+      <span class="input-group-addon">
+          <span class="glyphicon glyphicon-time"></span>
+      </span>
+  </div>
+  <script type="text/javascript">
+  $('.clockpicker').clockpicker({
+      placement: 'bottom',
+      align: 'left',
+      donetext: 'Done'
+  });
+  </script>
+  <div class="input-group clockpicker">
+      To : <input type="text" class="form-control" value="19:00" name="to">
+      <span class="input-group-addon">
+          <span class="glyphicon glyphicon-time"></span>
+      </span>
+  </div>
+  <script type="text/javascript">
+  $('.clockpicker').clockpicker({
+      placement: 'bottom',
+      align: 'left',
+      donetext: 'Done'
+  });
+  </script>
+  Slot price <input type="number" name="price" />
+  <!-- Total time <input type="number" name="total" placeholder="in Seconds"> -->
+  <input type="submit" value="Create Slot" />
+</form>
+</body>
+</html>

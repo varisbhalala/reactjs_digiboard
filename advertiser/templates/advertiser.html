@@ -1,0 +1,206 @@
+<html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script type="text/javascript">
+
+  $(document).on("keyup", "#state", function(){
+    var search_name = $(this).val();
+    var search = $('#search').val();
+    if(search_name){
+       //alert(stateID),
+          $.ajax({
+            type:'GET',
+            data:'search_name='+search_name+'&search='+search,
+            url:'{% url "search" %}',
+            success:function(html){
+              $('#suggestions').html(html);
+            }
+          });
+    }else{
+          $('#suggestions').html('<option value=""></option>');
+     }
+  });
+</script>
+<style type="text/css">
+    .card {
+      border: 0.5px rgba(0,0,0,0.2) solid;
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      width: 100%;
+      height: 100%;
+    }
+    .card:hover{
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.9);
+    }
+    .container {
+      padding: 2px 16px;
+    }
+
+    .show, button{
+
+    	padding-top: 1%;
+    	padding-left: 3%;
+      padding-right: 3%;
+      padding-bottom: 1%;
+    	height: 50%;
+    	width: 25%;
+    	display: block;
+  		float: left;
+  		position: relative;
+    }
+ </style>
+<<<<<<< HEAD
+
+<script type="text/javascript">
+  var map;
+  function initMap() {}
+</script>
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs&callback=initMap"></script>
+<script type="text/javascript">
+  var map;
+  function initMap(lat,lng,id,area) {
+  var myLatlng = new google.maps.LatLng(lat,lng);
+
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById(id), myOptions);
+
+  var marker = new google.maps.Marker({
+  draggable: false,
+  position: myLatlng,
+  map: map,
+  title: area
+  });
+  }
+  </script>
+=======
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs&callback=initMap"></script>
+<script type="text/javascript">
+  var map;
+  function initMap(record) {
+     var latlnglist=record.latlangs;
+     var lenofrecords = Object.keys(latlnglist).length;
+
+     var contentString = '<button type="button" style="width:50px;height:30px" class="btn btn-primary btn-block">Request</button>';
+
+     var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+     var myOptions = {
+     zoom: 13,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     };
+     map = new google.maps.Map(document.getElementById("mapdisplay"), myOptions);
+     var markers = []
+     var i;
+     for(i=0 ; i<lenofrecords ; i++){
+      var lat = parseFloat(latlnglist[i][0]);
+      var lng = parseFloat(latlnglist[i][1]);
+      var display = new google.maps.LatLng(lat,lng);
+      map.set('center',display);
+      var marker = new google.maps.Marker({
+      draggable: false,
+      position: display,
+      disableDefaultUI: true,
+      map: map,
+      title: "hfdhgf"
+    });
+
+     google.maps.event.addListener(marker,'click', (function(marker,infowindow){
+    return function() {
+        infowindow.open(map,marker);
+        };
+      })(marker,infowindow));
+
+     }
+
+  }
+
+</script>
+>>>>>>> b2bc6cc37396c315dc91be2b7533d4837a28dde3
+</head>
+<body>
+
+
+  <!-- <select id="city" name='city' class='form-control'>
+    <option value=""> -- Select City -- </option>
+    <option value=""> -- Select State First -- </option>
+  </select> -->
+
+
+<h1>ADVERTISER PANEL</h1>
+{% for entry in record1 %}
+<!-- <img src="/media/{{ entry.avatar }}" style="width:20%;height:20%;" alt="publisher image" /> -->
+Welcome {{entry.name}}
+
+{% endfor %}
+
+<form action="{% url 'search_done' %}" method="get">
+  {% csrf_token %}
+  search by:
+  <select name="search" id='search'>
+    <option value="street">search by street</option>
+    <option value="area">search by area</option>
+    <option value='city'>search by city</option>
+    <option value="state">search by state</option>
+  </select>
+  <!-- <input type="text" name="search_name"  /> -->
+  <input type="text" name="search_name" class='form-control' placeholder="place_name" id="state" list="suggestions"/>
+    <datalist id="suggestions">
+
+    </datalist>
+  <input type="submit" value="search" />
+</form>
+<<<<<<< HEAD
+{% if record %}
+{% for board_obj in record %}
+<div class="show">
+<div class='card'>
+  <button id="{{board_obj.id}}" style="width:100%; height:70%"></button>
+  <script type="text/javascript">initMap({{board_obj.lat}},{{board_obj.lng}},"{{board_obj.id}}","{{board_obj.area}}")</script>
+ <div class="container">
+    Area: {{board_obj.area}}<hr>
+    Street: {{board_obj.street}}<hr>
+    City: {{board_obj.city}}<hr>
+    State: {{board_obj.state}}
+</div>
+</div>
+=======
+<script type="text/javascript">
+  dict='{"latlangs":['
+</script>
+<div id="mapdisplay" style="width:100%; height:70%"></div>
+{% if record %}
+{% for board_obj in record %}
+  <script type="text/javascript">
+   {% if forloop.last %}
+    dict+='["'+{{board_obj.lat}}+'","'+{{board_obj.lng}}+'"]'
+   {% else %}
+    dict+='["'+{{board_obj.lat}}+'","'+{{board_obj.lng}}+'"],'
+   {% endif %}
+  console.log(dict)
+  </script>
+>>>>>>> b2bc6cc37396c315dc91be2b7533d4837a28dde3
+
+
+</div>
+{% endfor %}
+<<<<<<< HEAD
+{% endif %}
+
+</body>
+</html>
+=======
+<script type="text/javascript">
+  dict+=']}'
+  initMap(JSON.parse(dict))
+</script>
+{% endif %}
+
+</body>
+</html>
+>>>>>>> b2bc6cc37396c315dc91be2b7533d4837a28dde3

@@ -1,0 +1,244 @@
+{% extends 'base.html' %}	
+
+{% block urgent %}
+{% load static %}
+<!-- Bootstrap stylesheet -->
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+
+<!-- ClockPicker Stylesheet -->
+<link rel="stylesheet" type="text/css" href="/static/dist/bootstrap-clockpicker.min.css">
+<style>
+	th,td{
+		width: 100px;
+	}
+	td{
+		text-align: left;
+	}
+</style>
+
+<script type="text/javascript">
+	function outFocuse(){
+		time_sec=0;
+		var from = document.getElementById("demo-input").value;
+		var board_id = document.getElementById("board_select").value;
+		console.log("board_id" + board_id);
+		console.log("from" + from);
+		// console.log("from" + from);
+		$.ajax({
+			type:"GET",
+			data:"from="+from+"&board_id="+board_id,
+			url:"{% url 'check_slot' %}",
+			success: function(return_data){
+				if (return_data.is_success) {
+					$("#error").show();	
+					document.getElementById('submit-btn').disabled = true;
+				}
+				else{
+					$("#error").hide();
+				}
+			}
+
+		});
+		var e = document.getElementById("diff");
+		var time_ = e.options[e.selectedIndex].value;
+		if(time_ == 15){
+			time_sec = (time_*60);
+		}
+		if(time_ == 30){
+			time_sec = (time_*60);
+		}
+		if(time_ == 45){
+			time_sec = (time_*60);
+		}
+		if(time_ == 1){
+			time_sec = (time_*60*60);
+		}
+
+
+
+		var hr_split = from.split(":");
+		var from_seconds = (hr_split[0]*60*60)+(hr_split[1]*60);
+		var to_seconds = secondsToHms(from_seconds+time_sec);
+		document.getElementById("to-input").value = to_seconds;
+	}
+	// function list(){
+	// 	var selected = document.getElementById("board_select").value;
+	// 	document.getElementById("slot_list").innerHTML = selected;
+	// }
+	
+	{% if request.GET.board %}
+		
+		$( document ).ready(function() {
+    		var selected = {{request.GET.board}}
+    		console.log(selected);
+			$.ajax({
+				type:"GET",
+				data:"board_id="+selected,
+				url : '{% url "listSlot" %}',
+
+				success: function(html){
+					$("#slot_list").html(html);
+					$("#slot_table").show();
+				}
+			});
+		});
+		{% endif %}
+	
+	// action = "change"; 
+	 console.log("change");
+
+	$(document).on("change", "#board_select" , function(){
+		var selected = $(this).val();
+		$.ajax({
+			type:"GET",
+			data:"board_id="+selected,
+			url : '{% url "listSlot" %}',
+
+			success: function(html){
+				$("#slot_list").html(html);
+				$("#slot_table").show();
+			}
+		});
+	});
+	
+
+
+	function secondsToHms(d) {
+	    d = Number(d);
+	    var h = Math.floor(d / 3600);
+	    var m = Math.floor(d % 3600 / 60);
+	    if(h<10){h = "0"+h}
+	    if(m<10){m = "0"+m}
+
+	    return h +":"+ m ;
+	}
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<form id='form' method="post">
+
+ {% csrf_token %}
+<div class="container">
+
+<!-- <h2>{% if board_id%} Board Number: {{board_id.id}} {% endif %}</h2> -->
+
+
+<h3>Create Slot</h3>
+
+Select Board:
+<div class="form-group" data-placement="right"  data-align="top" data-autoclose="true">
+<select name="all_board" class='form-control' required  id="board_select">
+	<option value=''>--- Select Board ---</option>
+  {% for board_obj in board_id %}
+  	
+    <option value="{{ board_obj.id }}" {% ifequal board_obj.id|slugify request.GET.board %} selected {% endifequal %}  >{{ board_obj.id }} , {{ board_obj.street }} , {{ board_obj.area }} ,{{ board_obj.city }} , {{ board_obj.state }} </option>
+
+    	{% ifequal board_obj.id|slugify request.GET.board %}request.GET.board {% endifequal %}
+
+  {% endfor %}
+</select>
+</div>
+Duration:
+<div class="form-group" data-placement="right"  data-align="top" data-autoclose="true">
+    <select name='diff' class='form-control' id='diff'>
+    	<option value='15'>15 Minute</option>
+    	<option value='30'>30 Minute</option>
+    	<option value='45'>45 Minute</option>
+    	<option value='1'>1 Hour</option>
+    </select>
+</div>
+
+<input type='hidden' name='board_id' value="{% if board_id%}{{board_id.id}} {% endif %}">
+
+From:
+<div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+	<input id="demo-input" type='time' name='from' onfocusout="outFocuse()"  onChange="_write_()" class="form-control" required/>
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span>
+    
+</div>
+<span id="error" style="display: none;color: red;">This time slot is already created</span><br>
+To:
+<div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+	<input type='time' name='to' class="form-control" id='to-input' />
+	<input type='hidden' id='to_hidden' >
+    <span class="input-group-addon">
+        <span class="glyphicon glyphicon-time"></span>
+    </span>
+</div>
+
+Price:
+<div class="input-group clockpicker" data-placement="right"  data-align="top" data-autoclose="true">
+	<input id="demo-input" type='number' name='price' class="form-control" onfocus="check_to_time()" required/>
+    
+</div>
+
+<DIV class="btn-lg form-group">
+	<button class="btn-success form-control" id='submit-btn' >Create</button>
+</DIV>
+</div>
+</form>
+<center id="slot_table" style="display: none;" class="well"> 
+<h3>List of slots for selected Board.</h3>
+<table id="header">
+<tr>
+	<th>id</th>
+	<th>from</th>
+	<th>to</th>
+	<th>board_id</th>
+	<th>seconds left</th>
+	<th>price</th>
+	<th>created_at</th>
+	<th></th>
+</tr>
+<table id="slot_list">
+
+
+</table>
+
+</center>
+
+
+
+
+
+<!-- jQuery and Bootstrap scripts -->
+<script type="text/javascript" src="/static/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+<!-- ClockPicker script -->
+<script type="text/javascript" src="/static/dist/bootstrap-clockpicker.min.js"></script>
+
+<script type="text/javascript">
+$('#demo-input').clockpicker({
+    autoclose: true
+});
+
+function check_to_time(){
+	var to_time = document.getElementById('to-input').value;
+	var from = document.getElementById("demo-input");
+	if(to_time==""){
+		document.getElementById('submit-btn').disabled = true;
+		from.focus();
+	}
+	else{
+		document.getElementById('submit-btn').disabled = false;
+	}
+}
+
+function _write_(){
+	var to_time = document.getElementById('to-input').value;
+	if(to_time==""){
+
+	}
+	else{
+		document.getElementById('submit-btn').disabled = false;
+	}
+}
+</script>
+
+{% endblock %}

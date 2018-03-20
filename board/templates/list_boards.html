@@ -1,0 +1,48 @@
+<script>
+function myFunction(chk,del,updt) {
+    var checkBox = document.getElementById(chk);
+    var Delete = document.getElementById(del);
+    var Update = document.getElementById(updt);
+    if (checkBox.checked == true){
+        Delete.style.display = "block";
+        Update.style.display = "none";
+    } else {
+       Delete.style.display = "none";
+       Update.style.display = "block";
+    }
+}
+</script>
+<form action='{% url "create_board" %}' method='post'>
+	{% csrf_token %}
+
+
+{% if board %}
+<table>
+	<tr>
+		<th>BoardID</th>
+		<th>Latitude</th>
+		<th>Longitute</th>
+		<th>Street</th>
+		<th>Area</th>
+		<th>City</th>
+		<th>State</th>
+		<th>Create Date</th>
+	</tr>
+{% for board in board %}
+	<tr>
+		<td><INPUT type='hidden' name='board_id' value='{{board.id}}'> <INPUT type='hidden' name='list_board' value='{{board.id}}'> {{board.id}}</td>
+		<td>{{board.lat}}</td>
+		<td>{{board.lng}}</td>
+		<td>{{board.street}}</td>
+		<td>{{board.area}}</td>
+		<td>{{board.city}}</td>
+		<td>{{board.state}}</td>
+		<td>{{board.created_at}}</td>
+		<td><INPUT type='checkbox' name='delete' id="{{board.id}}a"  onclick="myFunction('{{board.id}}a','{{board.id}}b','{{board.id}}c')"> Delete</td>
+        <td><input id="{{board.id}}b" type='submit' style="display:none" value='Delete'>
+        <input type='submit' id="{{board.id}}c" value='Update'>	</td>
+	</tr>
+{% endfor %}
+</table>
+{% endif %}
+</form>

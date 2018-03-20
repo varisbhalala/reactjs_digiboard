@@ -1,0 +1,12 @@
+{% load custom_tags%}
+{% for request in requests%}
+      {% if request.shown %}
+      <a href="{%url 'requests'%}?id={{request.id}}" class="anchor"><div class="content" id="content"> {{request.advertiser.name}} wants to book yourccc board at {{request.slot.from_field}} to {{request.slot.to}}</div><hr style="border-color:#a09a9a;margin:0px"></a>
+      {% else %}
+      <a href="{%url 'requests'%}?id={{request.id}}" class="anchor"><div class="content" id="content" style="font-weight: bold;">{{request.advertiser.name}} wants to book your board at {% get_slot request.slot_id%}</div><hr style="border-color:#a09a9a;margin:0px"></a>  
+      {% endif %}
+{% endfor %}
+{% check_for_new request.session.user_id request.session.role|stringformat:"s" as result%}
+{% if result %}
+   {% update_req pid request.session.role%}
+{% endif %}

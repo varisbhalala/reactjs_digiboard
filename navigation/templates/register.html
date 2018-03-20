@@ -1,0 +1,192 @@
+{% include 'navigation.html' %}
+
+<script>
+
+  $(document).on("change", "#state", function(){
+    var stateID = $(this).val();
+    if(stateID){
+       //alert(stateID),
+          $.ajax({
+            type:'GET',
+            data:'state_id='+stateID,
+            url:'{% url "ajaxData" %}',
+            success:function(html){
+              $('#city').html(html);
+            }
+          });
+    }else{
+          $('#city').html('<option value="">Select state first</option>');
+     }
+  });
+
+
+
+function check_login(element) {
+    $("#login_ok").hide();
+    $("#login_not").hide();
+    login = $(element).val();
+    if (login == "") {
+        return;
+    }
+    $.ajax({
+        url : $(element).attr("data-url"),
+        data : {
+            "csrfmiddlewaretoken" : $(element).siblings("input[name='csrfmiddlewaretoken']" ).val(),
+            "login":login,
+        },
+        method: "GET",
+        dataType : "json",
+        success : function (returned_data) {
+            if (returned_data.is_success) {
+                $("#login_ok").show();
+                $("input[type=submit]").removeAttr("disabled");
+            } else {
+                $("#login_not").show();
+                $("input[type=submit]").attr("disabled", "disabled");
+
+            }
+        }
+    });
+}
+
+
+function check_email(element) {
+    $("#login_ok").hide();
+    $("#login_not_email").hide();
+    email = $(element).val();
+    role = document.querySelector('input[name = "role"]:checked').value;
+    if (email == "") {
+        return;
+    }
+    $.ajax({
+        url : $(element).attr("data-url"),
+        data : {
+            "csrfmiddlewaretoken" : $(element).siblings("input[name='csrfmiddlewaretoken']" ).val(),
+            "email":email,
+            "role": role
+        },
+        method: "GET",
+        dataType : "json",
+        success : function (returned_data) {
+            if (returned_data.is_success) {
+                $("#login_not_email").hide();
+                $("input[type=submit]").removeAttr("disabled");
+            } else {
+                $("#login_not_email").show();
+                $("input[type=submit]").attr("disabled", "disabled");
+            }
+        }
+    });
+}
+
+
+
+
+</script>
+<style type="text/css">
+
+#ck:hover, #ck:active,  input[type="radio"]:active {
+  background-color: blue;
+}
+</style>
+<body >
+<div class='container'>
+
+  <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+            <span class="radio-inline"> <h4><b>Register As:</b> </h4> </span>
+            <span class="form-group">
+              <div class='row'>
+                <div class='col-md-6'>
+                  <label id='ck' class="form-control btn-lg btn-success "><h5><input id='ck' type="radio"  name="role" value="p"/> Publisher </h5></label>
+                </div>
+                 <div class='col-md-6'>
+                  <label id='ck' class="form-control btn-lg btn-success "><h5><input type="radio" style="display: none;" name="role" value="a" /> Advertiser</h5></label>
+                </div>
+              </div>
+          </span>
+
+
+    <div class="form-group">
+        <label>Name: </label>
+        <input type="text" class="form-control" name="name" placeholder="name" />
+    </div>
+    <div class="form-group">
+      <label>Contact: </label>
+      <input type="number" class='form-control' name="contact_number" placeholder="contact_number" />
+    </div>
+    <div class="form-group">
+      <label>Email: </label>
+      <input type="email" name="email" class='form-control' placeholder="E-mail" onKeyUp= "check_email(this);return false;" data-url="{% url 'check_email' %}" />
+      <div class="col-md-6 col-sm-6" style="color:red;display:none;margin-top: 4px;"  id="login_not_email">
+          <span class="glyphicon glyphicon-remove"></span> Email is Registered.
+      </div><br>
+    </div>
+    <div class='form-group'>
+      <label>Select Avatar:</label>
+      <label class="btn-lg btn-primary form-control">
+        Browse&hellip;<input type="file" name="image" data-buttonText="Select a File" style="display: none;"/>
+      </label>
+    </div>
+    <div class='form-group'>
+      <label>Conpany Name:</label>
+      <input type="text" name="company_name" class='form-control' placeholder="Company Name" />
+     </div>
+    <div class="form-group">
+      <label>Conpany Address:</label>
+      <textarea name="company_address" class="form-control" rows="3" placeholder="Address" required></textarea>
+    </div>
+    <div class="row">
+      <div class='col-lg-6'>
+        <div class="form-group">
+          <select id="state" name='state' class="form-control">
+            <option value=""> -- Select State -- </option>
+            {% for state in state %}
+              <option value="{{state.id}}">{{ state.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class='col-lg-6'>
+          <div class="form-group">
+            <select id="city" name='city' class='form-control'>
+              <option value=""> -- Select City -- </option>
+              <option value=""> -- Select State First -- </option>
+            </select>
+          </div>
+      </div>
+    </div>
+    <label>Username:</label>
+    <div class='input-group'>
+
+       <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
+        </div>
+      <input type="text" class='form-control' name="username" placeholder="username"  id="username" onfocusout="" onKeyUp= "check_login(this);return false;" data-url="{% url 'check_user' %}"//>
+        <div class="col-md-6 col-sm-6" style="color:red;display:none;margin-top: 4px;"  id="login_not">
+          <span class="glyphicon glyphicon-remove"></span> Username already taken.
+      </div><br>
+      <div class="col-md-6 col-sm-6" style="color: green;display: none;margin-top: 4px;" id="login_ok">
+          <span class="glyphicon glyphicon-ok"></span> Username available.
+      </div><br>
+      </div>
+
+
+    <div class='form-group'>
+      <label>Password:</label>
+      <input class='form-control' type="password" name="password" placeholder="password"/>
+    </div>
+    <div class='form-group btn-lg'>
+      <input type="submit" class='form-control btn-success' id='register' value="Register" />
+    </div>
+  </form>
+
+</div>
+</div>
+
+
+</body>
+</html>

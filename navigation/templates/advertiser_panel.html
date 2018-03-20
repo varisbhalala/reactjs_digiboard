@@ -1,0 +1,151 @@
+<<<<<<< HEAD
+<<html>
+<head>
+	<title>advertiser</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+=======
+<html>
+<head>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+>>>>>>> 2f558a3a014656362040ae9244468ad07864daf9
+<script type="text/javascript">
+
+  $(document).on("keyup", "#state", function(){
+    var search_name = $(this).val();
+    var search = $('#search').val();
+    if(search_name){
+       //alert(stateID),
+          $.ajax({
+            type:'GET',
+            data:'search_name='+search_name+'&search='+search,
+            url:'{% url "search" %}',
+            success:function(html){
+              $('#suggestions').html(html);
+            }
+          });
+    }else{
+          $('#suggestions').html('<option value=""></option>');
+     }
+  });
+</script>
+<style type="text/css">
+    .card {
+      border: 0.5px rgba(0,0,0,0.2) solid;
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      width: 100%;
+      height: 100%;
+    }
+    .card:hover{
+      box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.9);
+    }
+    .container {
+      padding: 2px 16px;
+    }
+
+    .show, button{
+
+    	padding-top: 1%;
+    	padding-left: 3%;
+      padding-right: 3%;
+      padding-bottom: 1%;
+    	height: 50%;
+    	width: 25%;
+    	display: block;
+  		float: left;
+  		position: relative;
+    }
+ </style>
+
+<script type="text/javascript">
+  var map;
+  function initMap() {}
+</script>
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJn9YoTvEO_7o8JcfO33ZT8kWMy9P_IVs&callback=initMap"></script>
+<script type="text/javascript">
+  var map;
+  function initMap(lat,lng,id,area) {
+  var myLatlng = new google.maps.LatLng(lat,lng);
+
+  var myOptions = {
+     zoom: 13,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+     }
+  map = new google.maps.Map(document.getElementById(id), myOptions);
+
+  var marker = new google.maps.Marker({
+  draggable: false,
+  position: myLatlng,
+  map: map,
+  title: area
+  });
+  }
+  </script>
+<<<<<<< HEAD
+
+</head>
+<body>
+
+</body>
+</html>
+<br />
+<br />
+=======
+</head>
+<body>
+
+
+  <!-- <select id="city" name='city' class='form-control'>
+    <option value=""> -- Select City -- </option>
+    <option value=""> -- Select State First -- </option>
+  </select> -->
+
+>>>>>>> 2f558a3a014656362040ae9244468ad07864daf9
+
+<h1>ADVERTISER PANEL</h1>
+{% for entry in record1 %}
+<!-- <img src="/media/{{ entry.avatar }}" style="width:20%;height:20%;" alt="publisher image" /> -->
+Welcome {{entry.name}}
+
+{% endfor %}
+
+<form action="{% url 'search_done' %}" method="get">
+  {% csrf_token %}
+  search by:
+  <select name="search" id='search'>
+    <option value=street>search by street</option>
+    <option value="area">search by area</option>
+    <option value='city'>search by city</option>
+    <option value="state">search by state</option>
+  </select>
+  <!-- <input type="text" name="search_name"  /> -->
+  <input type="text" name="search_name" class='form-control' placeholder="place_name" id="state" list="suggestions"/>
+    <datalist id="suggestions">
+
+    </datalist>
+  <input type="submit" value="search" />
+</form>
+{% if record %}
+{% for board_obj in record %}
+<div class="show">
+<div class='card'>
+  <button id="{{board_obj.id}}" style="width:100%; height:70%"></button>
+  <script type="text/javascript">initMap({{board_obj.lat}},{{board_obj.lng}},"{{board_obj.id}}","{{board_obj.area}}")</script>
+ <div class="container">
+    Area: {{board_obj.area}}<hr>
+    Street: {{board_obj.street}}<hr>
+    City: {{board_obj.city}}<hr>
+    State: {{board_obj.state}}
+</div>
+</div>
+
+
+</div>
+{% endfor %}
+{% endif %}
+{% if message %}
+data not found
+{% endif %}
+</body>
+</html>

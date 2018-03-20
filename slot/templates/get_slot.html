@@ -1,0 +1,21 @@
+
+{% for obj in slot %}
+
+  <tr>
+
+  
+
+      <td>{{ obj.id }}</td>
+      <td>{{ obj.from_field }}</td>
+      <td>{{ obj.to }}</td>
+      <td>{{ obj.board_id }}</td>
+      <td>{{ obj.total }}</td>
+      <td>{{ obj.slot_price }}</td>
+      <td>{{ obj.created_at }}</td>
+
+      <td><form action="{% url 'deleteSlot' %}" method="post">{% csrf_token %}<input type='hidden' name='slot_id' value='{{obj.id}}'> <input type='submit' value='Remove'></form></td>
+  </tr>
+
+
+
+{% endfor %}
