@@ -10,7 +10,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from . serializers import userSerializer
 from digiboard_project import settings
-
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 def first_step_reg(request):
 	
 	context={}
@@ -194,9 +195,15 @@ def check_email(request):
     return JsonResponse(response_data)
 
 
-class userList(APIView):
-    def get(self,request):
+@api_view(['GET' , 'POST'])
+def userList(request):
+    if request.method == 'GET':    
         user1 = models.User.objects.all()
         serializer = userSerializer(user1, many=True)
         return Response(serializer.data)
-
+    elif request.method == 'POST':
+        serializer = userSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data , status = status.HTTP_201_CREATED)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
