@@ -4,6 +4,7 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string #For generate Random Tokens
 from django.core.exceptions import ObjectDoesNotExist #For Exception
 import sys
+import json
 from django.http import JsonResponse ,HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -205,5 +206,12 @@ def userList(request):
         serializer = userSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data , status = status.HTTP_201_CREATED)
+            content = json.dumps(serializer.data)
+            content1 = json.loads(content)
+            token = content1["token"]
+            email = content1["email"]
+            send_mail('Confirm Your Mail',"http://" +sys.argv[-1]+"/confirmMail/?key="+token,'digiboard2030@gmail.com', [email])
+            # token = content['token']
+            # print("token======> " )
+            return Response({'result':'user_added'} , status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
