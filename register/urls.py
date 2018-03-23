@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
 	path('registration/',views.first_step_reg,name='registration'),
-	path('confirmMail/',views.confirmMail,name='confirmMail'),
+	# path('confirmMail/',views.confirmMail,name='confirmMail'),
 	path('ajaxData/',views.ajaxData,name='ajaxData'),
 	path('profile/',views.profile,name='profile'),
 	path('welcome/',views.welcome,name='welcome'),
@@ -13,5 +13,5 @@ urlpatterns = [
 	path('check_user/',views.check_user,name='check_user'),
 	path('check_email/',views.check_email,name='check_email'),
 	path('list/', views.userList),
-
+	path('confirmMail/', views.confirmMail_api)
 ]

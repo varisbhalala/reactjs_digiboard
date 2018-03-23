@@ -9,7 +9,7 @@ from django.http import JsonResponse ,HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . serializers import userSerializer
+from . serializers import userSerializer ,confirmMailSerializer
 from digiboard_project import settings
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
@@ -213,5 +213,17 @@ def userList(request):
             send_mail('Confirm Your Mail',"http://" +sys.argv[-1]+"/confirmMail/?key="+token,'digiboard2030@gmail.com', [email])
             # token = content['token']
             # print("token======> " )
-            return Response({'result':'user_added'} , status = status.HTTP_201_CREATED)
+            return Response({'result':'user_added & check your mail'} , status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def confirmMail_api(request):
+    if request.method == "GET":
+        key = request.GET['key']
+        user = models.User.objects.get(token=key)
+        if user:
+            request.session['username'] = user.username
+            request.session['role'] = user.role
+            request.session['user_id'] = user.id
+            serializer = confirmMailSerializer(user)
+            return Response(serializer.data)

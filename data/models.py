@@ -173,14 +173,14 @@ class Upload(models.Model):
 
 
 class User(models.Model):   
-    username = models.CharField(unique=True, max_length=10)
+    username = models.CharField(unique=False, max_length=10)
     password = models.TextField()
-    email = models.CharField(unique=True, max_length=30)
+    email = models.CharField(unique=False, max_length=30)
     token = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
     role = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'data_user'

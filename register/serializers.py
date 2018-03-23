@@ -7,3 +7,8 @@ class userSerializer(serializers.ModelSerializer):
 		model = models.User
 		fields = ('__all__')
 
+class confirmMailSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = models.User
+		fields = ('__all__')

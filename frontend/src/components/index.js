@@ -1,5 +1,6 @@
 import React from 'react';
 import Register from '../containers/Register';
+
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 class Register_comp extends React.Component {
@@ -9,7 +10,9 @@ class Register_comp extends React.Component {
                 <MuiThemeProvider muiTheme={getMuiTheme()}>
 
                     <Register />
+                    
                 </MuiThemeProvider>
+               
             </div>
         );
     }

@@ -6,9 +6,9 @@ export default function(state=[] , action){
 
     switch(action.type) {
         case ADD_USER:{
-            console.log('inside switch', action.payload.data)
+            console.log('inside switch====', action.result)
             
-            return [action.payload.data , ...state];
+            return [action.result , ...state];
         }
 
         default:

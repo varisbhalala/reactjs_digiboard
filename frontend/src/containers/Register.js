@@ -5,6 +5,8 @@ import FlatButton from 'material-ui/FlatButton';
 import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import {RadioButtonGroup , RadioButton} from 'material-ui/RadioButton';
+
+
 const renderTextField = ({
     input,
     label,
@@ -27,6 +29,7 @@ const renderRadioGroup = ({input, ...rest}) => (
         onChange={(event, value) => input.onChange(value)}
     />
 )
+
 function randomString(){
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -45,6 +48,7 @@ export class Register extends React.Component {
             email: "",
             token: "",
             password: "",
+            userData : ""
         }
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -148,16 +152,18 @@ export class Register extends React.Component {
         
             </form>
             <div>
-                <p> {this.state.userData}</p>
+                {console.log('result',this.props.userData[0])}
+                { this.props.userData && this.props.userData.map( (user) => user.result)}
             </div>
-            </div>
+            </div>                           
         );
     }
 }
+
 const mapStateToProps = (state) => {
- 
+    console.log("user result ==========>>>>" ,state.user[0]);    
     return {
-    
+        
         userData: state.user
     }
 }
