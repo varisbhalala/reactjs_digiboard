@@ -8,7 +8,9 @@ import {createStore, applyMiddleware } from 'redux';
 import rootReducer from './reducers/index';
 import ReduxPromise from 'redux-promise';
 import thunk from 'redux-thunk';
+import Profile from './components/Profile'
 import Confirm_mail from './components/Confirm_mail'
+import Confirm_mail_withoutKey from './components/Confirm_mail_withoutKey'
 export const store = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
@@ -21,7 +23,9 @@ ReactDOM.render(
         <BrowserRouter>
             <Switch>
                 <Route path="/register" component={Register_comp} />
-                <Route path="/confirm_mail" component={Confirm_mail} />
+                <Route path="/confirmMail/:key" component={Confirm_mail} />
+                <Route path="/confirmMail/" component={Confirm_mail_withoutKey} />
+                <Route path="/profile" component={Profile} />
             </Switch>
         </BrowserRouter>
     </Provider>

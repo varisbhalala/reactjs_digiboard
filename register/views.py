@@ -210,20 +210,26 @@ def userList(request):
             content1 = json.loads(content)
             token = content1["token"]
             email = content1["email"]
-            send_mail('Confirm Your Mail',"http://" +sys.argv[-1]+"/confirmMail/?key="+token,'digiboard2030@gmail.com', [email])
+            send_mail('Confirm Your Mail',"http://localhost:3000" +"/confirmMail/"+token,'digiboard2030@gmail.com', [email])
             # token = content['token']
             # print("token======> " )
             return Response({'result':'user_added & check your mail'} , status = status.HTTP_201_CREATED)
         return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['GET' , 'POST'])
 def confirmMail_api(request):
-    if request.method == "GET":
-        key = request.GET['key']
-        user = models.User.objects.get(token=key)
+    if request.method == 'GET':
+        print("request=====>>>>>>>>>>",request.GET['key'])
+        try:
+            user = models.User.objects.get(token = request.GET['key'])
+        except:
+            user = None
+        print("user===========================", user)
         if user:
-            request.session['username'] = user.username
-            request.session['role'] = user.role
-            request.session['user_id'] = user.id
-            serializer = confirmMailSerializer(user)
-            return Response(serializer.data)
+            serializer = userSerializer(user, many=False)
+            print("serializer===========================", serializer)
+            return Response({'result' : 'mail confirmed and now got to profile page','user':serializer.data}, status = status.HTTP_201_CREATED)
+        elif user == None:
+            serializer = userSerializer(user, many=False)
+            return Response({'result' : 'invalid'}, status = status.HTTP_201_CREATED)
+    return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)

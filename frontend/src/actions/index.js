@@ -3,7 +3,7 @@ import {store} from '../index';
 
 
 export const ADD_USER = 'add_user';
-
+export const CONFIRM_MAIL = 'confirm_mail';
 
 
 export function addUser_status(result){
@@ -28,4 +28,24 @@ export function addUser(data) {
         store.dispatch(addUser_status(result.data));
         
     });
+}
+export function confirmMail_status(result) {
+    return{
+        type:CONFIRM_MAIL,
+        result
+    }
+}
+
+export function confirmMail(data){
+    console.log("confirm Mail====>>>>>>>>>>>>>>>>>>" , data.key);
+    axios.get("http://localhost:8000/confirmMail/",{
+        params: {
+            key: data.key
+        }
+    })
+
+    .then(result => {
+        console.log(result);
+        store.dispatch(confirmMail_status(result.data));
+    })
 }
