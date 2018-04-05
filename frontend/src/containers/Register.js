@@ -1,7 +1,7 @@
 import React from 'react';
 import {Field , reduxForm} from 'redux-form';
 import {addUser} from '../actions/index';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import {RadioButtonGroup , RadioButton} from 'material-ui/RadioButton';
@@ -78,25 +78,8 @@ export class Register extends React.Component {
         return (
             <div>
             <form onSubmit={this.handleSubmit}>
-                {/* <div>
-                    <Field name="role" ref={(input) => {this.role = input;}} component="input" value={this.state.role} type="text" placeholder="role"/>
-                </div>
-                <div>
-                    <Field name="username" ref={(input) => {this.username = input;}} component="input" type="text" placeholder="username"/>
-                </div>
-                <div>
-                    <Field name="email" component="input" ref={(input) => {this.email = input;}} type="email" placeholder="email"/>
-                </div>
-                <div>
-                    <Field name="password" component="input" ref={(input) => {this.password = input;}} type="password" placeholder="password"/>
-                </div>
-                <div>
-                    <Field name="token" ref={(input) => {this.token = input;}} component="input" type="text" placeholder="token"/>
-                </div>
-                <div>
-                    <button type="submit">submit </button>
-                </div> */}
-                <div>
+               
+        <div>
             <Field 
                 name='role'
                 ref={(input) => {this.role = input;}}
@@ -143,7 +126,7 @@ export class Register extends React.Component {
         {/* <button type="submit" >
           Submit
         </button> */}
-       <FlatButton 
+       <RaisedButton 
             type="submit"
             label="Submit"
         />

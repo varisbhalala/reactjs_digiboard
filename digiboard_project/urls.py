@@ -20,6 +20,13 @@ from django.urls import path , include
 from rest_framework.urlpatterns import format_suffix_patterns
 from register import views 
 from django.views import generic
+from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import verify_jwt_token
+
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('', include('navigation.urls')),
@@ -28,9 +35,13 @@ urlpatterns = [
     path('',include('publisher.urls')),
     path('',include('board.urls')),
     path('',include('slot.urls')),
+    path('',include('data.urls')),
     path('',include('advertiser.urls')),
     path('',include('example.urls')),
-    path('react/',generic.TemplateView.as_view(template_name='index.html'))
+    path('api-token-verify/', obtain_jwt_token),
+    path('react/',generic.TemplateView.as_view(template_name='index.html')),
+    # path('api/token/' , TokenObtainPairView.as_view()),
+    # path('api/token/refresh' , TokenRefreshView.as_view())
 ]
 
 if settings.DEBUG:

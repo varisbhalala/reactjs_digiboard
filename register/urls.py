@@ -13,5 +13,8 @@ urlpatterns = [
 	path('check_user/',views.check_user,name='check_user'),
 	path('check_email/',views.check_email,name='check_email'),
 	path('list/', views.userList),
-	path('confirmMail/', views.confirmMail_api)
+	# path('list_data/', views.userListViewSet.as_view()),
+	path('confirmMail/', views.confirmMail_api),
+	path('profile_submit/',views.profile_submit),
+	path('login_api/' , views.login_api)
 ]

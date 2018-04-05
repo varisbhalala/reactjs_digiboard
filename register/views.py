@@ -5,14 +5,18 @@ from django.utils.crypto import get_random_string #For generate Random Tokens
 from django.core.exceptions import ObjectDoesNotExist #For Exception
 import sys
 import json
+import jwt
+import time
 from django.http import JsonResponse ,HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from . serializers import userSerializer ,confirmMailSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status , generics
+from . serializers import userSerializer ,confirmMailSerializer , publisherSerializer , advertiserSerializer
 from digiboard_project import settings
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view , permission_classes
+from rest_framework_json_api.views import RelationshipView , ModelViewSet
 def first_step_reg(request):
 	
 	context={}
@@ -197,11 +201,14 @@ def check_email(request):
 
 
 @api_view(['GET' , 'POST'])
+@permission_classes((IsAuthenticated, ))
 def userList(request):
+    permission_classes = (IsAuthenticated,)
     if request.method == 'GET':    
         user1 = models.User.objects.all()
         serializer = userSerializer(user1, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data , status = status.HTTP_201_CREATED)
+
     elif request.method == 'POST':
         serializer = userSerializer(data=request.data)
         if serializer.is_valid():
@@ -233,3 +240,55 @@ def confirmMail_api(request):
             serializer = userSerializer(user, many=False)
             return Response({'result' : 'invalid'}, status = status.HTTP_201_CREATED)
     return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET' , 'POST'])
+def profile_submit(request):
+    if request.method == 'POST':
+        role = request.POST['role']
+        if role == 'p':
+            serializer = publisherSerializer(data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'result': 'publisher profile saved'} , status = status.HTTP_201_CREATED)
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        if role == 'a':
+            serializer = advertiserSerializer(data = request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'result' : 'advertiser profile saved'} , status = status.HTTP_201_CREATED)
+            return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
+
+# class userListViewSet(generics.ListAPIView):
+#     queryset = models.User.objects.all()
+#     serializer_class = userSerializer
+    
+#     def user_generic_view(self,request):
+#         if request.method == 'GET':
+#             queryset = self.get_queryset()
+#             serializer = userSerializer(queryset,many = True)
+#             return Response(serializer.data)
+        
+@api_view(['GET' , 'POST'])
+def login_api(request):
+    # print("request data========>>>>>>>>" , request.data)
+    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",request.META['HTTP_AUTHORIZATION'])
+    # data = jwt.decode(request.META['HTTP_AUTHORIZATION'] , 'varis5519' , algorithms=['HS256'])
+    # init_time =  time.strftime('%H:%M:%S', time.localtime(data['iat']))
+    # exp_time =  time.strftime('%H:%M:%S', time.localtime(data['exp']))
+    # current_time = time.strftime('%H:%M:%S', time.localtime())
+    # print("time========================" , current_time)
+    # print("exp time========================" , exp_time)
+    # print("init time========================" , init_time)
+    # print("data===============", data)
+    if request.method == 'POST':
+        user = models.User.objects.get(username = request.data['username'] , password = request.data['password'])
+        request.data['id'] = user.id
+        # print("user======" , user)
+        token = jwt.encode(request.data , 'digi' , algorithm='HS256')
+
+        print("token======" , token)
+        if user:
+            serializer = userSerializer(user, many=False)   
+            # encoded = jwt.encode({message : 'login successful' , status :})
+            return Response({'result' : 'login successful' , 'token' : token}, status = status.HTTP_201_CREATED)
+        return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
