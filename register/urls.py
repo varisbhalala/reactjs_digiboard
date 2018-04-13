@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from rest_framework_jwt.views import refresh_jwt_token
 # from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
@@ -16,5 +17,7 @@ urlpatterns = [
 	# path('list_data/', views.userListViewSet.as_view()),
 	path('confirmMail/', views.confirmMail_api),
 	path('profile_submit/',views.profile_submit),
-	path('login_api/' , views.login_api)
+	path('login_api/' , views.login_api),
+	path('api-token-refresh/', refresh_jwt_token),
+	path('id_api/' , views.id_api)
 ]

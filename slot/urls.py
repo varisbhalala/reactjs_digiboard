@@ -7,4 +7,5 @@ urlpatterns=[
 	path('listSlot/',views.listSlot,name = 'listSlot'),
 	path('deleteSlot/',views.deleteSlot,name = 'deleteSlot'),
 	path('check_slot/', views.check_slot, name= 'check_slot'),
+	path('create_slot_api/' , views.create_slot_api)
 ]

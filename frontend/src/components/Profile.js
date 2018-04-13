@@ -39,7 +39,9 @@ export class Profile extends React.Component {
             city:"",
             state:"",
             role:"",
-            user:""
+            user:"",
+            city_disabled:true,
+            city_disabled_text:"Please select state first"
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeCity = this.handleChangeCity.bind(this);
@@ -61,7 +63,11 @@ export class Profile extends React.Component {
         event.preventDefault();
         value = value+1
         
-        this.setState({value,state_name:value});
+        this.setState({
+            value,state_name:value,
+            city_disabled:false,
+            city_disabled_text:"Select City"
+        });
         console.log("value===",{value})
         console.log("index==", index)
         var data = {
@@ -216,10 +222,12 @@ export class Profile extends React.Component {
 
                     <div>
                         <SelectField
+                            disabled={this.state.city_disabled}
+                            
                             value={this.state.value1}
                             ref={(input) => {this.city_list_input = input;}}
                             name="city_list_input"
-                            floatingLabelText="Select city"
+                            floatingLabelText={this.state.city_disabled_text}
                             onChange={this.handleChangeCity.bind(this)}
                             floatingLabelStyle={{color: 'blue'}}
                             >
@@ -249,6 +257,7 @@ const mapStateToProps = (state) => {
         mail:state.mail,
         city:state.city_list,
         profile : state.profile
+        
     }
 }
 function mapDispatchToProps(dispatch){

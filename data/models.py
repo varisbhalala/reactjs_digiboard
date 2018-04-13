@@ -35,8 +35,8 @@ class Advertiser(models.Model):
 
 
 class Board(models.Model):
-    lat = models.DecimalField(max_digits=10, decimal_places=8)
-    lng = models.DecimalField(max_digits=11, decimal_places=8)
+    lat = models.DecimalField(max_digits=30, decimal_places=15)
+    lng = models.DecimalField(max_digits=30, decimal_places=15)
     street = models.TextField()
     area = models.TextField()
     city = models.TextField()
@@ -90,14 +90,14 @@ class Payment(models.Model):
 class Publisher(models.Model):
     name = models.TextField()
     contact = models.BigIntegerField(blank=True, null=True)
-    avatar = models.FileField(upload_to='publisher/')
+    avatar = models.FileField(upload_to='publisher/' , null=True)
     company_name = models.TextField()
     company_address = models.TextField()
     city = models.TextField()
     state = models.TextField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
-    user = models.ForeignKey('User', models.DO_NOTHING ,db_column='User_id')
+    user = models.IntegerField(blank=False , null=False)
 
     class Meta:
         managed = True

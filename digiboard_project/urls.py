@@ -22,6 +22,7 @@ from register import views
 from django.views import generic
 from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework_jwt.views import verify_jwt_token
+from rest_framework_jwt.views import refresh_jwt_token
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -40,6 +41,7 @@ urlpatterns = [
     path('',include('example.urls')),
     path('api-token-verify/', obtain_jwt_token),
     path('react/',generic.TemplateView.as_view(template_name='index.html')),
+    
     # path('api/token/' , TokenObtainPairView.as_view()),
     # path('api/token/refresh' , TokenRefreshView.as_view())
 ]

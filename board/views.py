@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from . serializers import boardSerializer
 import datetime
-
+from register.permissions import IsAuthenticated,IsPublisher,IsAdvertiser
+from rest_framework.decorators import api_view , permission_classes
 def create_board(request):
 	context={'state': models.States.objects.filter(country_id=101)}
 	
@@ -100,9 +101,22 @@ def accept_or_decline(request):
     	req.save()
     return render(request,'accept_or_decline.html')
 
-class get_board_api(APIView):
-    def get(self,request):
-        board1 = models.Board.objects.all()
-        serializer = boardSerializer(board1, many=True)
-        return Response(serializer.data)
 
+@api_view(['GET' , 'POST'])
+def create_board_api(request):
+	if request.method == 'POST':
+		serializer = boardSerializer(data = request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response({'result':'board added'} , status = status.HTTP_201_CREATED)
+		return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET' , 'POST'])
+def get_board_api(request):
+	print("data=======" , request.data)
+	if request.method == 'POST':
+		publisher_id = request.POST['publisher_id']
+		board = models.Board.objects.filter(publisher = publisher_id)
+		serializer = boardSerializer(board,many = True)
+		return Response(serializer.data)

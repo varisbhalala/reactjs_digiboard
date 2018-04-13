@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {store} from '../index';
+import LoginModal from '../components/LoginModal';
 import Set_Auth_Token from './Set_Auth_Token'
 // import jwt_decode from 'jwt-decode';
 export const ADD_USER = 'add_user';
@@ -7,7 +8,9 @@ export const CONFIRM_MAIL = 'confirm_mail';
 export const CITY_LIST = 'city_list';
 export const ADD_PROFILE = 'add_profile';
 export const LOGIN_USER = 'login'
-
+export const LOGIN_MODAL = 'login_modal'
+export const LAT = 'lat'
+export const LNG = 'lng'
 // var jwt = require('jwt-simple');
 var jwt = require('jsonwebtoken');
 export function addUser_status(result){
@@ -20,9 +23,8 @@ export function addUser_status(result){
 
 
 export function addUser(data) {
-    console.log(data);
-    var data_encoded = jwt.sign(data , 'varis5519' , {expiresIn : 60 * 60})
-    console.log("encoded==========================>>>>>>",data_encoded)
+    console.log("tokkkkkken"+localStorage.jwtToken);
+    Set_Auth_Token(localStorage.jwtToken);
     axios.post("http://localhost:8000/list/", data) 
     
     .then(result => {
@@ -46,7 +48,21 @@ export function addUser(data) {
         // console.log("token===================>",token)
         store.dispatch(addUser_status(result.data));
         
+    })
+    .catch(err => {
+        if(err.response.status === 401){
+            store.dispatch(login_popup({'open' : true , 'close' : false}))
+        }
+
+        
+        // store.dispatch(addUser_status({'result' : 'auth failed'}))
     });
+}
+export function login_popup(result) {
+    return {
+        type : LOGIN_MODAL,
+        result
+    }
 }
 export function login_status(result) {
     return { 
@@ -54,6 +70,20 @@ export function login_status(result) {
         result
     }
 }
+// export function login(data) {
+//     console.log(data);
+//     var token = jwt.sign(data , 'varis5519' , { expiresIn: 60*60 })
+//     localStorage.setItem('authToken' , token)
+//     Set_Auth_Token(token)
+//     console.log("token===================>",token)
+//     axios.post("http://localhost:8000/login_api/" , token)
+//     .then(result => {
+//         var decoded = jwt.decode(result);
+//         console.log("result=?>>>>>>>>>>>>>>>>>>>>>>)))))" ,decoded)
+//         console.log("result=?>>>>>>>>>>>>>>>>>>>>>>" , result.data.result)
+//         store.dispatch(login_status(result.data.result));
+//     })
+// }
 export function login(data) {
     console.log(data);
     
@@ -63,7 +93,7 @@ export function login(data) {
         console.log("token]]]]]]]]0" ,result.data.token )
         // var decoded = jwt.decode(result);
         localStorage.setItem('jwtToken' , result.data.token);
-        console.log("local storage---------" , localStorage.getItem('jwtToken'))
+        console.log("local storage---------" , localStorage.jwtToken);
         console.log("result=?>>>>>>>>>>>>>>>>>>>>>>" , result.data.result)
         store.dispatch(login_status(result.data.result));
     })
@@ -74,9 +104,27 @@ export function addProfile_status(result) {
         result
     }
 }
+export function create_board_action(data){
+    axios.post("http://localhost:8000/create_board_api/" ,data)
+    .then(result => {
+        console.log("result data======>>>>>>>" , result.data)   
+    })
+}
 export function addProfile_action(data) {
-    console.log("profile data", data.get("image"))
-    axios.post("http://localhost:8000/profile_submit/",data, {
+    // console.log("profile data", data.get("avatar"))
+    // axios.post("http://localhost:8000/profile_submit/",data, {
+    //     headers: {
+    //         'Content-Type' : 'multipart/form-data'
+    //     }
+    // })
+    // .then(result => {
+    //     console.log("profile result ======>>>>>" , result.data);
+    //     store.dispatch(addProfile_status(result.data));
+    // })
+    // .catch(err => {
+    //     console.log('err', err);
+    // })
+    axios.post("http://localhost:8000/profile_submit/" , data , {
         headers: {
             'Content-Type' : 'multipart/form-data'
         }
@@ -84,9 +132,6 @@ export function addProfile_action(data) {
     .then(result => {
         console.log("profile result ======>>>>>" , result.data);
         store.dispatch(addProfile_status(result.data));
-    })
-    .catch(err => {
-        console.log('err', err);
     })
 }
 export function confirmMail_status(result) {
@@ -108,6 +153,35 @@ export function confirmMail(data){
         console.log(result);
         store.dispatch(confirmMail_status(result.data));
     })
+}
+
+export function lat_action(data){
+    console.log("action_lat")
+    store.dispatch(lat_status(data));
+    // return {
+    //     type:LAT,
+    //     data
+    // }
+}
+export function lat_status(data){
+    return{
+        type:LAT,
+        data
+    }
+}
+export function lng_action(data){
+    console.log("action_lng")
+    store.dispatch(lng_status(data));
+    // return {
+    //     type:LNG,
+    //     data
+    // }
+}
+export function lng_status(data){
+    return{
+        type:LNG,
+        data
+    }
 }
 export function city_list_result(result){
     return {

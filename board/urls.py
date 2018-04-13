@@ -9,5 +9,6 @@ urlpatterns=[
 	path('test_bootstrap',views.test_bootstrap,name='test_bootstrap'),
     path('requests/',views.requests,name='requests'),
     path('accept_or_decline/',views.accept_or_decline,name="accept_or_decline"),
-    path('get_board_api/', views.get_board_api.as_view())
+    path('get_board_api/', views.get_board_api),
+	path('create_board_api/' , views.create_board_api)
 ]

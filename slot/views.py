@@ -1,9 +1,13 @@
 from django.shortcuts import render, HttpResponseRedirect
 from data import models
 import json
+from rest_framework.response import Response
 from django.db import models as mod
 from django.http import JsonResponse
 from datetime import datetime
+from rest_framework import status
+from .serializers import slotSerializer
+from rest_framework.decorators import api_view
 # ================ I Have to Check The Role of the user =================
 
 def create_slot(request):
@@ -93,3 +97,13 @@ def deleteSlot(request):
 	data = models.Slot.objects.get(id = request.POST['slot_id'])
 	data.delete()
 	return HttpResponseRedirect("../create_slot")
+
+
+@api_view(['POST'])
+def create_slot_api(request):
+	if request.method == 'POST':
+		serializer = slotSerializer(data = request.data)
+		if serializer.is_valid():
+			serializer.save()
+			return Response({"result" : "slot created"},status = status.HTTP_201_CREATED)
+		return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)

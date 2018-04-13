@@ -1,10 +1,14 @@
 import React from 'react';
 import {Field , reduxForm} from 'redux-form';
 import {addUser} from '../actions/index';
-import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import {RadioButtonGroup , RadioButton} from 'material-ui/RadioButton';
+import LoginModal from '../components/LoginModal';
+
+
+
 
 
 const renderTextField = ({
@@ -21,6 +25,7 @@ const renderTextField = ({
         {...custom}
     />
 )
+
 const renderRadioGroup = ({input, ...rest}) => (
     <RadioButtonGroup
         {...input}
@@ -48,9 +53,11 @@ export class Register extends React.Component {
             email: "",
             token: "",
             password: "",
-            userData : ""
+            userData : "",
+            open : false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
+        
     }
     
     handleSubmit = (event,values) => {
@@ -74,12 +81,30 @@ export class Register extends React.Component {
     }
     
     render(){
+        
         // const {fields: {username,role,password,email,token}, handleSubmit} =this.props;
         return (
             <div>
             <form onSubmit={this.handleSubmit}>
-               
-        <div>
+                {/* <div>
+                    <Field name="role" ref={(input) => {this.role = input;}} component="input" value={this.state.role} type="text" placeholder="role"/>
+                </div>
+                <div>
+                    <Field name="username" ref={(input) => {this.username = input;}} component="input" type="text" placeholder="username"/>
+                </div>
+                <div>
+                    <Field name="email" component="input" ref={(input) => {this.email = input;}} type="email" placeholder="email"/>
+                </div>
+                <div>
+                    <Field name="password" component="input" ref={(input) => {this.password = input;}} type="password" placeholder="password"/>
+                </div>
+                <div>
+                    <Field name="token" ref={(input) => {this.token = input;}} component="input" type="text" placeholder="token"/>
+                </div>
+                <div>
+                    <button type="submit">submit </button>
+                </div> */}
+                <div>
             <Field 
                 name='role'
                 ref={(input) => {this.role = input;}}
@@ -126,7 +151,7 @@ export class Register extends React.Component {
         {/* <button type="submit" >
           Submit
         </button> */}
-       <RaisedButton 
+       <FlatButton 
             type="submit"
             label="Submit"
         />
@@ -138,16 +163,31 @@ export class Register extends React.Component {
                 {console.log('result',this.props.userData[0])}
                 { this.props.userData && this.props.userData.map( (user) => user.result)}
             </div>
-            </div>                           
+            <LoginModal />
+            {/* <div>
+            <Dialog
+                title="Login"
+                modal={true}
+                open={this.state.open}
+                >
+                <form action="/" method="POST" onSubmit={(e) => { e.preventDefault(); alert('Submitted form!'); this.handleClose(); } }>
+                This dialog spans the entire width of the screen.
+                <TextField name="email" hintText="Email" />
+                <TextField name="pwd" type="password" hintText="Password" />
+                <div style={{ textAlign: 'right', padding: 8, margin: '24px -24px -24px -24px' }}>
+                    {actions}
+                </div>
+                </form>
+            </Dialog>
+            </div>        */}
+            </div>                    
         );
     }
 }
 
 const mapStateToProps = (state) => {
-    console.log("user result ==========>>>>" ,state.user[0]);    
     return {
-        
-        userData: state.user
+        userData: state.user 
     }
 }
 function mapDispatchToProps(dispatch){

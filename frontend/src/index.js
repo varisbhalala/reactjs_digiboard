@@ -11,8 +11,8 @@ import Profile from './components/Profile'
 import Confirm_mail from './components/Confirm_mail'
 import Login from './components/Login'
 import Confirm_mail_withoutKey from './components/Confirm_mail_withoutKey'
-
-
+import Create_Board from './components/Create_Board'
+import Create_Slot from './components/Create_Slot'
 export const store = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
@@ -31,6 +31,8 @@ ReactDOM.render(
                 <Route path="/confirmMail/" component={Confirm_mail_withoutKey} />
                 <Route path="/profile" component={Profile} />
                 <Route path="/login" component={Login} />
+                <Route path="/create_board" component={Create_Board} />
+                <Route path="/create_slot" component={Create_Slot} />
             </Switch>
         </BrowserRouter>
     </Provider>

@@ -7,10 +7,12 @@ import sys
 import json
 import jwt
 import time
+import datetime
 from django.http import JsonResponse ,HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+# from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAuthenticated,IsPublisher,IsAdvertiser
 from rest_framework import status , generics
 from . serializers import userSerializer ,confirmMailSerializer , publisherSerializer , advertiserSerializer
 from digiboard_project import settings
@@ -201,27 +203,31 @@ def check_email(request):
 
 
 @api_view(['GET' , 'POST'])
-@permission_classes((IsAuthenticated, ))
+@permission_classes((IsAuthenticated,))
 def userList(request):
-    permission_classes = (IsAuthenticated,)
-    if request.method == 'GET':    
-        user1 = models.User.objects.all()
-        serializer = userSerializer(user1, many=True)
-        return Response(serializer.data , status = status.HTTP_201_CREATED)
+    if IsAuthenticated:
+        print ("herrrrrr")
+        if request.method == 'GET':    
+            user1 = models.User.objects.all()
+            serializer = userSerializer(user1, many=True)
+            return Response(serializer.data , status = status.HTTP_201_CREATED)
 
-    elif request.method == 'POST':
-        serializer = userSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            content = json.dumps(serializer.data)
-            content1 = json.loads(content)
-            token = content1["token"]
-            email = content1["email"]
-            send_mail('Confirm Your Mail',"http://localhost:3000" +"/confirmMail/"+token,'digiboard2030@gmail.com', [email])
-            # token = content['token']
-            # print("token======> " )
-            return Response({'result':'user_added & check your mail'} , status = status.HTTP_201_CREATED)
-        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'POST':
+            serializer = userSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                content = json.dumps(serializer.data)
+                content1 = json.loads(content)
+                token = content1["token"]
+                email = content1["email"]
+                send_mail('Confirm Your Mail',"http://localhost:3000" +"/confirmMail/"+token,'digiboard2030@gmail.com', [email])
+                # token = content['token']
+                # print("token======> " )
+                return Response({'result':'user_added & check your mail'} , status = status.HTTP_201_CREATED)
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    else:
+        print ("hereee failllll")
+        
 
 @api_view(['GET' , 'POST'])
 def confirmMail_api(request):
@@ -245,18 +251,23 @@ def confirmMail_api(request):
 def profile_submit(request):
     if request.method == 'POST':
         role = request.POST['role']
+        id = request.POST['user']
+        print("user id==============" ,id)
         if role == 'p':
             serializer = publisherSerializer(data = request.data)
             if serializer.is_valid():
+                print("serializer=============" , serializer)
                 serializer.save()
-                return Response({'result': 'publisher profile saved'} , status = status.HTTP_201_CREATED)
+                publisher_id = models.Publisher.objects.get(user = request.POST['user'])
+                return Response({'result': 'publisher profile saved' , 'publisher_id' : publisher_id.id} , status = status.HTTP_201_CREATED)
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         if role == 'a':
             serializer = advertiserSerializer(data = request.data)
             if serializer.is_valid():
                 serializer.save()
-                return Response({'result' : 'advertiser profile saved'} , status = status.HTTP_201_CREATED)
-            return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
+                advertiser_id = models.Advertiser.objects.get(user = request.POST['user'])
+                return Response({'result' : 'advertiser profile saved' , 'advertiser_id' : advertiser_id} , status = status.HTTP_201_CREATED)
+            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
 
 # class userListViewSet(generics.ListAPIView):
 #     queryset = models.User.objects.all()
@@ -268,6 +279,20 @@ def profile_submit(request):
 #             serializer = userSerializer(queryset,many = True)
 #             return Response(serializer.data)
         
+
+@api_view(['GET'])
+def id_api(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    token1 = token.split(" ")
+    print('token================' , token1[1])
+    if request.method == 'GET':
+        decode = jwt.decode(token1[1] , 'digi' , algorithms=['HS256'])    
+        print("token--------------------" , decode['data']['id'])
+        publisher = models.Publisher.objects.get(user = decode['data']['id'])
+        return Response({'publisher_id' : publisher.id } );
+
+
+
 @api_view(['GET' , 'POST'])
 def login_api(request):
     # print("request data========>>>>>>>>" , request.data)
@@ -284,7 +309,8 @@ def login_api(request):
         user = models.User.objects.get(username = request.data['username'] , password = request.data['password'])
         request.data['id'] = user.id
         # print("user======" , user)
-        token = jwt.encode(request.data , 'digi' , algorithm='HS256')
+        print("now",datetime.datetime.utcnow())
+        token = jwt.encode({"data":request.data,'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds= 6048000) }, 'digi' , algorithm='HS256')
 
         print("token======" , token)
         if user:
@@ -292,3 +318,18 @@ def login_api(request):
             # encoded = jwt.encode({message : 'login successful' , status :})
             return Response({'result' : 'login successful' , 'token' : token}, status = status.HTTP_201_CREATED)
         return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
+
+from rest_framework.views import exception_handler
+
+def custom_exception_handler(exc, context):
+    # # Call REST framework's default exception handler first,
+    # # to get the standard error response.
+    # response = exception_handler(exc, context)
+    # print ("exc::::",exc,"exc codes:::::",exc,"context::::",context)
+    # # Now add the HTTP status code to the response.
+    # if response is not None:
+    #     print ("hereeeeeee")
+    #     response.data['status_code'] = 123
+
+    # return response
+    pass
