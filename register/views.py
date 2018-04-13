@@ -262,12 +262,12 @@ def profile_submit(request):
                 return Response({'result': 'publisher profile saved' , 'publisher_id' : publisher_id.id} , status = status.HTTP_201_CREATED)
             return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         if role == 'a':
-            serializer = advertiserSerializer(data = request.data)
-            if serializer.is_valid():
-                serializer.save()
+            serializer1 = advertiserSerializer(data = request.data)
+            if serializer1.is_valid():
+                serializer1.save()
                 advertiser_id = models.Advertiser.objects.get(user = request.POST['user'])
-                return Response({'result' : 'advertiser profile saved' , 'advertiser_id' : advertiser_id} , status = status.HTTP_201_CREATED)
-            return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+                return Response({'result' : 'advertiser profile saved' , 'advertiser_id' : advertiser_id.id} , status = status.HTTP_201_CREATED)
+            return Response(serializer1.errors, status = status.HTTP_400_BAD_REQUEST)
 
 # class userListViewSet(generics.ListAPIView):
 #     queryset = models.User.objects.all()
@@ -288,8 +288,18 @@ def id_api(request):
     if request.method == 'GET':
         decode = jwt.decode(token1[1] , 'digi' , algorithms=['HS256'])    
         print("token--------------------" , decode['data']['id'])
-        publisher = models.Publisher.objects.get(user = decode['data']['id'])
-        return Response({'publisher_id' : publisher.id } );
+        username = decode['data']['username']
+        password = decode['data']['password']
+        print("username--------------------" , username)
+        print("password--------------------" , password)
+        user = models.User.objects.get(username = username , password= password)
+        print("role--------------------" , user.role)
+        if user.role == 'p':
+            publisher = models.Publisher.objects.get(user = decode['data']['id'])
+            return Response({'publisher_id' : publisher.id , 'role' : 'p' } );
+        if user.role == 'a':
+            advertiser = models.Advertiser.objects.get(user = decode['data']['id'])
+            return Response({'advertiser_id' : advertiser.id , 'role' : 'a'})
 
 
 
@@ -316,7 +326,7 @@ def login_api(request):
         if user:
             serializer = userSerializer(user, many=False)   
             # encoded = jwt.encode({message : 'login successful' , status :})
-            return Response({'result' : 'login successful' , 'token' : token}, status = status.HTTP_201_CREATED)
+            return Response({'result' : True, 'token' : token}, status = status.HTTP_201_CREATED)
         return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
 
 from rest_framework.views import exception_handler

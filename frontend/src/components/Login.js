@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import TextField from 'material-ui/TextField';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {Link} from 'react-router-dom';
+import history from '../history'
 const renderTextField = ({
     input,
     label,
@@ -76,8 +78,8 @@ export class Login extends React.Component {
             </form>
             </MuiThemeProvider>
             <div>
+                {this.state.login_result && history.push('/home')}
                 
-                {this.props.login_result}
             </div>
         </div>
         );
@@ -85,10 +87,12 @@ export class Login extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-
+    // console.log("login== result---------" , state.login)
+    // if(state.login){
+    //     history.push('/home')
+    // }
     return {
-        
-        login_result: state.login
+        login_result: state.login,
     }
 }
 function mapDispatchToProps(dispatch){

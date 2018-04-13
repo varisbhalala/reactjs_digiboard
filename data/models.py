@@ -27,7 +27,7 @@ class Advertiser(models.Model):
     state = models.TextField()
     created_at = models.DateTimeField(default=datetime.datetime.now())
     updated_at = models.DateTimeField(default=datetime.datetime.now())
-    user = models.ForeignKey('User', models.DO_NOTHING ,db_column='user_id')
+    user = models.IntegerField(blank=False , null=False)
 
     class Meta:
         managed = True
@@ -122,8 +122,8 @@ class Requestboard(models.Model):
 
 
 class Slot(models.Model):
-    from_field = models.TimeField(db_column='from_')  # Field renamed because it ended with '_'.
-    to = models.TimeField()
+    from_field = models.TextField(db_column='from_')  # Field renamed because it ended with '_'.
+    to = models.TextField()
     total = models.IntegerField()
     slot_price = models.IntegerField()
     created_at = models.DateTimeField(default=datetime.datetime.now())

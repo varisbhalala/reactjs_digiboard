@@ -120,3 +120,10 @@ def get_board_api(request):
 		board = models.Board.objects.filter(publisher = publisher_id)
 		serializer = boardSerializer(board,many = True)
 		return Response(serializer.data)
+
+@api_view(['GET' ,'POST'])
+def search_board_api(request):
+	if request.method == "POST":
+		boards = models.Board.objects.filter(city = request.POST['city'] , state = request.POST['state'])
+		serializer = boardSerializer(boards , many = True)
+		return Response(serializer.data)

@@ -7,6 +7,8 @@ import login_modalReducer from './Login_Modal';
 import profileReducer from './Add_Profile';
 import loginReducer from './Login';
 import latReducer from './Lat';
+import createBoardReducer from './Create_Board';
+import createSlotReducer from './Create_Slot'
 import lngReducer from './Lng';
 const rootReducer = combineReducers({
     form:formReducer,
@@ -17,7 +19,9 @@ const rootReducer = combineReducers({
     profile: profileReducer,
     login:loginReducer,
     lat:latReducer,
-    lng:lngReducer
+    lng:lngReducer,
+    createBoard:createBoardReducer,
+    createSlot:createSlotReducer
 });
 
 export default rootReducer;

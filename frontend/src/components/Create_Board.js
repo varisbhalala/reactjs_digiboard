@@ -229,6 +229,7 @@ export class Create_Board extends React.Component {
                     </div>
                     </form>
                 </MuiThemeProvider>
+                { this.props.createBoard}
             </div>
         );
     }
@@ -240,6 +241,7 @@ const mapStateToProps = (state) => {
         // lat_data:lat,
         // lng_data:lng
         mail:state.mail,
+        createBoard: state.createBoard
     }
 
 }

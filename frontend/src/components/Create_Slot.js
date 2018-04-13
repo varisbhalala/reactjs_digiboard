@@ -8,6 +8,7 @@ import MenuItem from 'material-ui/MenuItem';
 import TimePicker from 'material-ui/TimePicker';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import {create_slot_action} from '../actions/index';
 
 const renderTextField = ({
     input,
@@ -32,7 +33,9 @@ export class Create_Slot extends React.Component {
             discable_to:true,
             discable_to_text:"Plese select from first",
             board_list:"",
-            is_DataFetched: false
+            is_DataFetched: false,
+            board_index:"",
+            board_id:""
         }
         // fetch("http://localhost:8000/id_api/" ,{
         //     headers: {
@@ -106,6 +109,16 @@ export class Create_Slot extends React.Component {
 
         
     }
+    handleChange = (event , value ,index) => {
+        value = value + 1
+        console.log("value------" , value)
+        console.log("index------" , index)
+        
+        this.setState({
+            board_index : index,
+            board_id: index
+        })    
+    }
     handleChange_from = (event , date) => {
         this.setState({value24_from : date})
         this.setState({discable_to : false})
@@ -125,10 +138,14 @@ export class Create_Slot extends React.Component {
         // console.log("from to--------------------------" , ( (this.state.value24_to.getTime() - this.state.value24_from.getTime()) / 1000 ));
         console.log("from to--------------------------" , ( to - from ));
         var data = {
-            _from : this.state.value24_from.getHours() + ":" + this.state.value24_from.getMinutes(),
+            from_field : this.state.value24_from.getHours() + ":" + this.state.value24_from.getMinutes(),
             to : this.state.value24_to.getHours() + ":" + this.state.value24_to.getMinutes(),
-            slot_price : this.slot_price.value
+            total : (to - from),
+            slot_price : this.slot_price.value,
+            board : this.state.board_id,
+            publisher : this.state.publisher_id
         }
+        this.props.create_slot_action(data);
     }
     render(){
         // if(!this.state.isDataFetched) return null;
@@ -139,7 +156,7 @@ export class Create_Slot extends React.Component {
                     { this.state.board_list &&
                     <div>
                         <SelectField
-                            value={this.state.index}
+                            value={this.state.board_index}
                             ref={(input) => {this.board_select = input;}}
                             name="board_select"
                              
@@ -148,7 +165,7 @@ export class Create_Slot extends React.Component {
                             onChange={this.handleChange}
                             floatingLabelStyle={{color: 'silver'}}
                             >
-                            {this.state.board_list.map((board) => <MenuItem key={board.id} value={board.area} primaryText={board.area} />)}
+                            {this.state.board_list.map((board) => <MenuItem key={board.id} value={board.id} primaryText={board.area} />)}
                             {/* {this.state.state_list_fetch.map((state_list_fetch) => state_list_fetch.name)} */}
                         </SelectField>
                     </div> }
@@ -190,18 +207,19 @@ export class Create_Slot extends React.Component {
                     </div>
                     </form>
                 </MuiThemeProvider>
+                {this.props.createSlot}
             </div>
         );
     }
 }
 const mapStateToProps = (state) => {
     return {
-
+        createSlot : state.createSlot
     }
 }
 function mapDispatchToProps(dispatch){
     return {
-
+        create_slot_action : create_slot_action
     }
 }
 const Create_Slot1 = connect(mapStateToProps , mapDispatchToProps )(Create_Slot);

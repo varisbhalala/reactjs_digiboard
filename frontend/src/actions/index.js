@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {store} from '../index';
+import history from '../history'
 import LoginModal from '../components/LoginModal';
 import Set_Auth_Token from './Set_Auth_Token'
 // import jwt_decode from 'jwt-decode';
@@ -11,6 +12,8 @@ export const LOGIN_USER = 'login'
 export const LOGIN_MODAL = 'login_modal'
 export const LAT = 'lat'
 export const LNG = 'lng'
+export const CREATE_SLOT = 'create_slot'
+export const CREATE_BOARD = 'create_board'
 // var jwt = require('jwt-simple');
 var jwt = require('jsonwebtoken');
 export function addUser_status(result){
@@ -90,6 +93,7 @@ export function login(data) {
     console.log("token===================>",data)
     axios.post("http://localhost:8000/login_api/" , data)
     .then(result => {
+        
         console.log("token]]]]]]]]0" ,result.data.token )
         // var decoded = jwt.decode(result);
         localStorage.setItem('jwtToken' , result.data.token);
@@ -108,7 +112,14 @@ export function create_board_action(data){
     axios.post("http://localhost:8000/create_board_api/" ,data)
     .then(result => {
         console.log("result data======>>>>>>>" , result.data)   
+        store.dispatch(create_board_status(result.data.result))
     })
+}
+export function create_board_status(result) {
+    return {
+        type : CREATE_BOARD,
+        result
+    }
 }
 export function addProfile_action(data) {
     // console.log("profile data", data.get("avatar"))
@@ -200,4 +211,18 @@ export function city_list(data){
         console.log("city action=========",result.data);
         store.dispatch(city_list_result(result.data));
     })
+}
+export function create_slot_action(data) {
+    console.log("slot data==========" , data);
+    axios.post("http://localhost:8000/create_slot_api/" , data)
+    .then( result => {
+        console.log('result of slot ---------' , result)
+        store.dispatch(create_slot_status(result.data.result))
+    })
+}
+export function create_slot_status(result) {
+    return {
+        type : CREATE_SLOT,
+        result
+    }
 }
