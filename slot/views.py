@@ -107,3 +107,13 @@ def create_slot_api(request):
 			serializer.save()
 			return Response({"result" : "slot created"},status = status.HTTP_201_CREATED)
 		return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def get_slot_api(request):
+	print("get slot------" , request.data)
+	if request.method == 'POST':
+		board_id = request.data['board_id']
+		slot= models.Slot.objects.filter(board = board_id)
+		serializer = slotSerializer(slot , many = True)
+		print("serializer------" , serializer)
+		return Response(serializer.data)

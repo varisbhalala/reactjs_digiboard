@@ -15,5 +15,6 @@ urlpatterns=[
 	path('advertiser_notify/',views.advertiser_notify,name='advertiser_notify'),
 	path('pay/', views.pay , name="pay"),
 	path('pay_charge/' , views.pay_charge, name="pay_charge"),
+	path('payment_api/' , views.payment_api)
 ]
 

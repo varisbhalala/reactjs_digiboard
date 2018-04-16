@@ -123,7 +123,10 @@ def get_board_api(request):
 
 @api_view(['GET' ,'POST'])
 def search_board_api(request):
+	print('data in api--------' , request.data)
 	if request.method == "POST":
-		boards = models.Board.objects.filter(city = request.POST['city'] , state = request.POST['state'])
+		print('city---------' , request.data['city'])
+		print('state--------' , request.data['state'])
+		boards = models.Board.objects.filter(city = request.data['city'] , state = request.data['state'])
 		serializer = boardSerializer(boards , many = True)
 		return Response(serializer.data)

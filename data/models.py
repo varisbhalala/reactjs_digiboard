@@ -71,14 +71,14 @@ class Log(models.Model):
 
 class Payment(models.Model):
     price = models.FloatField()
-    service_tax_ratio = models.FloatField()
-    service_tax = models.FloatField()
-    total_amount = models.FloatField()
-    token = models.TextField()
-    transaction_type = models.TextField()
-    pay_log = models.TextField()
+    service_tax_ratio = models.FloatField(null=True)
+    service_tax = models.FloatField(null=True)
+    total_amount = models.FloatField(null=True)
+    token = models.TextField(null=True)
+    transaction_type = models.TextField(default="card",null=True)
+    pay_log = models.TextField(default="success",null=True)
     created_at = models.DateTimeField(default=datetime.datetime.now())
-    advertiser = models.ForeignKey(Advertiser, models.DO_NOTHING, db_column='Advertiser_id')  # Field name made lowercase.
+    advertiser = models.ForeignKey('Advertiser', models.DO_NOTHING, db_column='Advertiser_id')  # Field name made lowercase.
     publisher = models.ForeignKey('Publisher', models.DO_NOTHING, db_column='Publisher_id')  # Field name made lowercase.
     slot = models.ForeignKey('Slot', models.DO_NOTHING,db_column='Slot_id')
 

@@ -14,6 +14,8 @@ export const LAT = 'lat'
 export const LNG = 'lng'
 export const CREATE_SLOT = 'create_slot'
 export const CREATE_BOARD = 'create_board'
+export const SEARCH_BOARD = 'search_board'
+export const GET_SLOT = 'get_slot'
 // var jwt = require('jwt-simple');
 var jwt = require('jsonwebtoken');
 export function addUser_status(result){
@@ -101,6 +103,34 @@ export function login(data) {
         console.log("result=?>>>>>>>>>>>>>>>>>>>>>>" , result.data.result)
         store.dispatch(login_status(result.data.result));
     })
+}
+export function search_board_action(data) {
+    console.log(data);
+    axios.post("http://localhost:8000/search_board_api/" , data)
+    .then(result => {
+        console.log(result.data)
+        store.dispatch(search_board_status(result.data))
+    })
+}
+export function search_board_status(result) {
+    return {
+        type : SEARCH_BOARD,
+        result
+    }
+}
+export function get_slot_action(data) {
+    console.log(data);
+    axios.post("http://localhost:8000/get_slot_api/" , data)
+    .then(result => {
+        console.log(result.data)
+        store.dispatch(get_slot_status(result.data))
+    })
+}
+export function get_slot_status(result) {
+    return {
+        type: GET_SLOT,
+        result
+    }
 }
 export function addProfile_status(result) {
     return {

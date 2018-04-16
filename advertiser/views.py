@@ -12,7 +12,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 from datetime import datetime, timedelta
 import stripe
-
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import paymentSerializer
+from rest_framework.decorators import api_view
 
 def advertiser(request):
 	return render(request,'advertiser.html')
@@ -238,3 +241,12 @@ def pay(request):
         payment.save()
         return HttpResponseRedirect("../welcome")
 
+@api_view(['POST'])
+def payment_api(request):
+    print("data==================",request.data)
+    if request.method == 'POST':
+        serializer = paymentSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            print('data' , serializer)
+            return Response({'result' : 'payment done'})

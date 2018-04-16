@@ -16,6 +16,7 @@ import Create_Slot from './components/Create_Slot'
 import history from './history'
 import Home from './components/Home'
 import Search_Board from './components/Search_Board'
+import Pay from './components/Pay'
 export const store = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
@@ -38,6 +39,7 @@ ReactDOM.render(
                 <Route path="/create_slot" component={Create_Slot} />
                 <Route path="/home" component={Home} />
                 <Route path="/search_board" component={Search_Board} />
+                <Route path="/pay" component={Pay} />
             </Switch>
         </Router>
     </Provider>
