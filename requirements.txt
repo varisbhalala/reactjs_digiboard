@@ -34,7 +34,7 @@ djangorestframework==3.7.7
 djangorestframework-jsonapi==2.4.0
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==3.2.3
-ecdsa==0.13
+ecdsa==0.13.3
 Fabric==1.10.2
 future==0.16.0
 geopy==1.11.0
