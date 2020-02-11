@@ -18,7 +18,7 @@ coreschema==0.0.4
 cryptography==2.1.4
 cycler==0.10.0
 daphne==1.4.2
-Django==2.0.2
+Django==2.2.10
 django-channels==0.7.0
 django-cities==0.5.0.5
 django-cors-headers==2.2.0
