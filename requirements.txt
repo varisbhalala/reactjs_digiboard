@@ -30,7 +30,7 @@ django-paypal==0.4.1
 -e git+https://github.com/lazybird/django-solo.git@4ba01cd66f1c4b1886cec0bdf81887954254ef15#egg=django_solo
 django-stripe-payments==2.0.0
 django-webpack-loader==0.2.4
-djangorestframework==3.7.7
+djangorestframework==3.11.2
 djangorestframework-jsonapi==2.4.0
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==3.2.3
