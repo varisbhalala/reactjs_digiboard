@@ -7,7 +7,7 @@
     "axios": "^0.18.0",
     "google-map-react": "^0.34.0",
     "history": "^4.7.2",
-    "jsonwebtoken": "^8.2.0",
+    "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^2.2.0",
     "jwt-simple": "^0.5.1",
     "material-ui": "^0.20.0",
